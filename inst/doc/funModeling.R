@@ -39,17 +39,14 @@ cross_plot(heart_disease, str_input="max_heart_rate_2", str_target="has_heart_di
 heart_disease$max_heart_rate_3=equal_freq(var=heart_disease$max_heart_rate, n_bins = 5)
 cross_plot(heart_disease, str_input="max_heart_rate_3", str_target="has_heart_disease")
 
-## ----massive_cross_plot1, eval=FALSE-------------------------------------
+## ----several_cross_plot1, eval=FALSE-------------------------------------
 #  cross_plot(heart_disease, str_input="max_heart_rate_3", str_target="has_heart_disease", path_out="my_plots")
 
-## ----massive_cross_plot2, eval=FALSE-------------------------------------
+## ----several_cross_plot2, eval=FALSE-------------------------------------
 #  vars_to_analyze=c("age", "oldpeak", "max_heart_rate")
 
-## ----massive_cross_plot3, eval=FALSE-------------------------------------
-#  massive_cross_plot(data=heart_disease, str_target="has_heart_disease", str_vars=vars_to_analyze)
-
-## ----massive_cross_plot4, eval=FALSE-------------------------------------
-#  massive_cross_plot(data=heart_disease, str_target="has_heart_disease", str_vars=vars_to_analyze, path_out="my_plots")
+## ----several_cross_plot3, eval=FALSE-------------------------------------
+#  cross_plot(data=heart_disease, str_target="has_heart_disease", str_input=vars_to_analyze)
 
 ## ----model_perfomance1---------------------------------------------------
 ## Training and test data. Percentage of training cases default value=80%.
