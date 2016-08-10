@@ -1,18 +1,19 @@
 Package: funModeling
 Type: Package
-Title: Learning Data Cleaning, Visual Analysis and Model Performance
-Description: Learn data cleaning, visual data analysis and model performance assessment (KS, AUC and ROC), package core is in the vignette documentation explaining last topics as a tutorial.
-Version: 1.1
-Date: 2016-03-14
+Title: Title: Learn Data Science Through the "Data Science Live Book"
+Description: Around 10% of almost any predictive modeling project is spent in predictive modeling, 'funModeling' and the book <http://livebook.datascienceheroes.com/> are intended to cover remaining 90%: data preparation, profiling, selecting best variables 'dataViz', assessing model performance and other functions.
+Version: 1.2
+Date: 2016-08-08
 Author: Pablo Casas
 Maintainer: Pablo Casas <pabloc@datascienceheroes.com>
 License: GPL-2
+BugReports: https://github.com/pablo14/funModeling/issues
+URL: livebook.datascienceheroes.com
 LazyData: true
-Imports: ROCR, ggplot2, gridExtra, pander, plyr, reshape2, scales
+Imports: ROCR, ggplot2, gridExtra, pander, reshape2, scales, dplyr,
+        lazyeval, utils
 Depends: R (>= 3.2.1), Hmisc (>= 3.17.1)
-VignetteBuilder: knitr
-Suggests: knitr
 NeedsCompilation: no
-Packaged: 2016-03-14 01:11:05 UTC; Usuario
+Packaged: 2016-08-10 01:22:41 UTC; Usuario
 Repository: CRAN
-Date/Publication: 2016-03-14 07:54:20
+Date/Publication: 2016-08-10 09:45:13

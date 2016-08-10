@@ -4,18 +4,21 @@
 \alias{cross_plot}
 \title{Cross-plotting input variable vs. target variable}
 \usage{
-cross_plot(data, str_input, str_target, path_out, auto_binning)
+cross_plot(data, str_input, str_target, path_out, auto_binning,
+  plot_type = "both")
 }
 \arguments{
 \item{data}{data frame source}
 
-\item{str_input}{string input variable}
+\item{str_input}{string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
 
 \item{str_target}{string of the variable to predict}
 
 \item{path_out}{path directory, if it has a value the plot is saved}
 
 \item{auto_binning}{indicates the automatic binning of str_input variable based on equal frequency (function 'equal_freq'), default value=TRUE}
+
+\item{plot_type}{indicates if the output is the 'percentual' plot, the 'quantity' or 'both' (default).}
 }
 \value{
 cross plot

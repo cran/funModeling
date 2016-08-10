@@ -1,4 +1,4 @@
-utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","variable","geom_bar","geom_text","position","guides","labs","theme","element_text","scale_y_continuous","position_dodge","ylim","guide_legend","scale_fill_discrete"),package = "funModeling", add = F)
+utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","variable","geom_bar","geom_text","position","guides","labs","theme","element_text","scale_y_continuous","position_dodge","ylim","guide_legend","scale_fill_discrete", "aes_string", "geom_boxplot","stat_summary", "theme_bw", "freq", "geom_vline", "geom_density", "margin"),package = "funModeling", add = F)
 
 
 #' @importFrom grDevices dev.off jpeg rainbow
@@ -7,19 +7,22 @@ utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","vari
 #' @importFrom pander pandoc.table
 #' @importFrom  Hmisc cut2
 #' @importFrom  ggplot2 ggplot
-#' @import  plyr
+#' @import dplyr
 #' @importFrom reshape2 dcast melt
+#' @importFrom utils packageVersion
 #' @importFrom scales percent
+#' @importFrom lazyeval interp
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ROCR prediction performance plot
-#'
+#' @importFrom stats cor quantile
 #' @title Cross-plotting input variable vs. target variable
 #' @description The cross_plot shows how the input variable is correlated with the target variable, getting the likelihood rates for each input's bin/bucket .
 #' @param data data frame source
-#' @param str_input string input variable
+#' @param str_input string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.
 #' @param str_target string of the variable to predict
 #' @param path_out path directory, if it has a value the plot is saved
 #' @param auto_binning indicates the automatic binning of str_input variable based on equal frequency (function 'equal_freq'), default value=TRUE
+#' @param plot_type indicates if the output is the 'percentual' plot, the 'quantity' or 'both' (default).
 #' @examples
 #' ## Example 1:
 #' cross_plot(data=heart_disease, str_input="chest_pain", str_target="has_heart_disease")
@@ -38,16 +41,26 @@ utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","vari
 #'
 #' @return cross plot
 #' @export
-cross_plot <- function(data, str_input, str_target, path_out, auto_binning)
+cross_plot <- function(data, str_input, str_target, path_out, auto_binning, plot_type='both')
 {
+	data=as.data.frame(data)
+
 	## Handling missing parameters
-  if(missing(auto_binning)) auto_binning=T
+  if(missing(auto_binning)) auto_binning=NA
   if(missing(path_out)) path_out=NA
 
+  ## If str_input then runs for all variables
+  if(missing(str_input))
+	{
+		## Excluding target variable
+  	str_input=colnames(data)
+		str_input=str_input[str_input!=str_target]
+	}
 
+	## Iterator
   for(i in 1:length(str_input))
   {
-    cross_plot_logic(data = data, str_input=str_input[i], str_target=str_target, path_out = path_out, auto_binning)
+    cross_plot_logic(data = data, str_input=str_input[i], str_target=str_target, path_out = path_out, auto_binning, plot_type)
   }
 
 
@@ -55,47 +68,48 @@ cross_plot <- function(data, str_input, str_target, path_out, auto_binning)
 
 
 
-cross_plot_logic<-function(data, str_input, str_target, path_out, auto_binning) {
+cross_plot_logic<-function(data, str_input, str_target, path_out, auto_binning, plot_type)
+{
+	# data=heart_disease; str_input="max_heart_rate"; str_target="has_heart_disease"; auto_binning=T
+	  check_target_existence(data, str_target=str_target)
 
-	    ## Checking for variable existance.
-	  if(!(str_target %in% colnames(data))) stop(sprintf("Target variable '%s' does not exists", str_target))
-	  if(!(str_input %in% colnames(data))) stop(sprintf("Input variable '%s' does not exists", str_input))
+		data=remove_na_target(data, str_target=str_target)
 
-	  ## Removing NA from target variable #########
-	  data_tmp=subset(data, !is.na(data[, str_target]))
-	  if(nrow(data) > nrow(data_tmp))
-	  {
-	    warning(sprintf("There were removed %d rows with NA values in target variable '%s'.", nrow(data)-nrow(data_tmp), str_target))
+		check_target_2_values(data, str_target=str_target)
 
-	    ## Keeping with cleaned data
-	    data=data_tmp
-	  }
-	  #############################################
+		if(!(plot_type %in% c('both','percentual', 'quantity')))
+			stop("Value for 'plot_type' is not valid: available values: 'both', 'percentual' or 'quantity'")
 
 	  ## Initial assignments
 	  target=data[, as.character(str_target)]
 	  varInput=data[, as.character(str_input)]
 
-	  ## Stop if target is not binary #############
-	  if(length(unique(target))>2)
-	  {
-	    stop(sprintf("Target variable '%s' does not have 2 unique values.", str_target))
-	  }
-	  #############################################
-
 	  ## Auto binning #############################
-	  if(auto_binning & is.numeric(varInput) & length(unique(varInput))>20)
+	  if(is.numeric(varInput))
 	  {
-	    print(sprintf("Plotting transformed variable '%s' with 'equal_freq', (too many values). Disable with 'auto_binning=FALSE'", str_input))
-	    varInput=suppressWarnings(equal_freq(varInput, 10))
+		  if(!is.na(auto_binning) & auto_binning )
+		  {
+		    print(sprintf("Plotting transformed variable '%s' with 'equal_freq', (too many values). Disable with 'auto_binning=FALSE'", str_input))
+		    varInput=suppressWarnings(equal_freq(varInput, 10))
+		  }
+
+	  	if(is.na(auto_binning) & length(unique(varInput))>20)
+		  {
+		    print(sprintf("Plotting transformed variable '%s' with 'equal_freq', (too many values). Disable with 'auto_binning=FALSE'", str_input))
+		    varInput=suppressWarnings(equal_freq(varInput, 10))
+		  }
 	  }
 	  #############################################
 
 
 	  ## Infer the less representative class (commonly the one to predict)
-	  dcount=data.frame(count(target))
-	  posClass=as.character(dcount[order(dcount$freq),][1,1])
-	  negClass=as.character(dcount[order(dcount$freq),][2,1])
+	  #dcount=data.frame(count(target))
+	  df_target=data.frame(target=target)
+	  dcount=group_by(df_target, target) %>% summarise(freq=n()) %>% arrange(freq)
+	  ## Converting factors to character
+	  dcount=data.frame(lapply(dcount, as.character), stringsAsFactors=FALSE)
+	  posClass=dcount[1,1]
+	  negClass=dcount[2,1]
 
 	  dataCast = dcast(data,varInput~target,fun.aggregate=length, value.var = str_target)
 
@@ -106,7 +120,8 @@ cross_plot_logic<-function(data, str_input, str_target, path_out, auto_binning) 
 	  dataMelt$variable=factor(dataMelt$variable, c(posClass,negClass))
 
 	  ## Getting percentage numbers
-	  m1 = ddply(dataMelt, "varInput", plyr::summarize, ratio=value/sum(value))
+	  m1=group_by(dataMelt, varInput) %>% mutate(ratio = value/sum(value)) %>% select(varInput, ratio) %>% arrange(varInput)
+
 
 	  ## Order by var input
 	  m2 = dataMelt[order(dataMelt$varInput ),]
@@ -119,32 +134,62 @@ cross_plot_logic<-function(data, str_input, str_target, path_out, auto_binning) 
 	  dataGrafPrep$fum=as.numeric(as.numeric(rownames(dataGrafPrep)) %% 2 == 0)
 
 	  ## Computing middle position in each sub bar
-	  dataGrafPrep=ddply(dataGrafPrep, .(varInput), transform, position = 0.5*ratio+fum*(sum(value)-value)/sum(value))
+		dataGrafPrep=group_by(dataGrafPrep, varInput) %>% mutate(position = 0.5*ratio+fum*(sum(value)-value)/sum(value))
+
 
 	  lGraf=list()
 
-	  ## Percentual
+	   ## Percentual
 	  lGraf$percentual =  ggplot(dataGrafPrep, aes(x=factor(varInput), y=value, fill=variable))+geom_bar(position="fill",stat="identity") +
 	    geom_text(aes(label = sprintf("%0.1f", 100*ratio), y = position)) +
 	    guides(fill=FALSE) + labs(x = str_input, y = paste(str_target, " (%)", sep=" ")) +
-	    theme(axis.text.x=element_text(angle = 45, hjust = 1),
+	    theme_bw() +
+	  	theme(axis.text.x=element_text(angle = 45, hjust = 1),
 	          panel.grid.major = element_blank(),
-	          panel.grid.minor = element_blank())+
+	          panel.grid.minor = element_blank(),
+	  				panel.border = element_blank(),
+	    			plot.background = element_blank(),
+	  		  	axis.title.x=element_text(margin=margin(15,0,0,0)),
+						axis.title.y=element_text(margin=margin(0,15,0,0))
+	  		) +
 	    scale_y_continuous(labels=percent)
 
 
 	    ## Quantity plot
-	  lGraf$quantity =  ggplot(dataGrafPrep, aes(x=factor(varInput), y=value, ymax=max(value)*1.05, fill=variable)) + geom_bar(position=position_dodge(),stat="identity") +
+	  lGraf$quantity = ggplot(dataGrafPrep, aes(x=factor(varInput), y=value, ymax=max(value)*1.05, fill=variable)) +
+	  	geom_bar(position=position_dodge(),stat="identity") +
 	    geom_text(aes(label=value), position=position_dodge(width=0.9), vjust=-0.25, size=4) +
-	    labs(x = str_input, y = paste(str_target, " (count)", sep=" ")) +
+	  	labs(x = str_input, y = paste(str_target, " (count)", sep=" ")) +
 	    ylim(0, max(dataGrafPrep$value)+max(dataGrafPrep$value)*0.05) +
-	    theme(axis.text.x=element_text(angle = 45, hjust = 1),legend.title=element_blank()) +
+			theme_bw() +
+	    theme(plot.background = element_blank(),
+	    			panel.border = element_blank(),
+    				axis.text.x=element_text(angle = 45, hjust = 1),
+    				legend.title=element_blank(),
+	    			axis.title.x=element_text(margin=margin(15,0,0,0)),
+						axis.title.y=element_text(margin=margin(0,15,0,0))) +
 	    guides(col = guide_legend(ncol = 1, byrow = TRUE)) +
 	    scale_fill_discrete(name=str_target)
 
 
-	  ## Printing both plots
-	  final_plot=grid.arrange(lGraf$percentual, lGraf$quantity, ncol=2)
+
+	  if(plot_type=='both')
+	  {
+	  	## Printing both plots
+	  	final_plot=grid.arrange(lGraf$percentual, lGraf$quantity, ncol=2)
+	  }
+
+	  if(plot_type=='percentual')
+	  {
+	  	final_plot=lGraf$percentual
+	  	plot(final_plot)
+	  }
+
+	  if(plot_type=='quantity')
+	  {
+	  	final_plot=lGraf$quantity
+	  	plot(final_plot)
+	  }
 
 	  ## Save plot
 	  if(!is.na(path_out))
@@ -196,23 +241,6 @@ equal_freq <- function(var, n_bins)
 }
 
 
-#' @title Generate several cross_plot at the same time.
-#' @description It creates as many cross_plots as variable names are present in 'str_vars'. Additionally, they can be saved as jpeg in a folder (setting 'path_out' parameter).
-#' @param data data frame source
-#' @param str_target string of the variable to predict
-#' @param str_vars vector of strings containing the variables names to be used as input in each cross_plot.
-#' @param path_out path directory, if it has a value the plot is saved in 'path_out'
-#' @param auto_binning indicates the automatic binning of str_input variable based on equal frequency (function 'equal_freq'), default value=TRUE
-#' @export
-massive_cross_plot <- function (data, str_target, str_vars, path_out, auto_binning)
-{
-  .Deprecated("cross_plot")
-
-	cross_plot(data=data, str_target=str_target, str_input = str_vars, path_out = path_out, auto_binning = auto_binning)
-
-	message("Now 'cross_plot' does the same as 'massive_cross_plot'. Just set 'str_input' to a character vector containing the desired variables names. 'massive_cross_plot' will not be available in next release")
-
-}
 
 
 

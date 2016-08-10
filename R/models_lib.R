@@ -1,29 +1,37 @@
 #' @title Get a summary for the given data frame.
-#' @description For each variable it returns: Quantity and percentage of zeros (q_zeros and p_zeros respectevly). Same metrics for NA values (q_NA and p_na). Last two columns indicates data type and quantity of unique values.
+#' @description For each variable it returns: Quantity and percentage of zeros (q_zeros and p_zeros respectevly). Same metrics for NA values (q_NA/p_na), and infinite values (q_inf/p_inf). Last two columns indicates data type and quantity of unique values.
 #' This function print and return the results.
 #' @param data data frame
+#' @param print_results if FALSE then there is not a print in the console, TRUE by default.
 #' @examples
 #' df_status(heart_disease)
 #' @return Metrics data frame
 #' @export
-df_status <- function(data) {
-  df_status=data.frame(
+df_status <- function(data, print_results)
+{
+	if(missing(print_results))
+		print_results=T
+
+  df_status_res=data.frame(
     q_zeros=sapply(data, function(x) sum(x==0,na.rm=T)),
     p_zeros=round(100*sapply(data, function(x) sum(x==0,na.rm=T))/nrow(data),2),
     q_na=sapply(data, function(x) sum(is.na(x))),
-    p_na=round(100*sapply(data, function(x) sum(is.na(x)))/nrow(data),2),
-    type=sapply(data, class),
+  	p_na=round(100*sapply(data, function(x) sum(is.na(x)))/nrow(data),2),
+    q_inf=sapply(data, function(x) sum(is.infinite(x))),
+  	p_inf=round(100*sapply(data, function(x) sum(is.infinite(x)))/nrow(data),2),
+  	type=sapply(data, class),
     unique=sapply(data, function(x) sum(!is.na(unique(x))))
   )
 
   ## Create new variable for column name
-  df_status$variable=rownames(df_status)
-  rownames(df_status)=NULL
+  df_status_res$variable=rownames(df_status_res)
+  rownames(df_status_res)=NULL
 
   ## Reordering columns
-  df_status=df_status[,c(7,1,2,3,4,5,6)]
+  df_status_res=df_status_res[, c(9,1,2,3,4,5,6,7,8)]
 
-  print(df_status)
+  ## Print or return results
+  if(print_results) print(df_status_res) else return(df_status_res)
 }
 
 
@@ -103,4 +111,50 @@ get_sample <- function(data, percentage_tr_rows=0.8, seed=987)
   return(tr)
 }
 
+#' #' @title Generates lift or gain performance table
+#' #' @description It retrieves the cumulative positive rate when score is divided in (i.e.) 10 segments.
+#' #' @param data input data source
+#' #' @param str_score the variable which contains the score number
+#' #' @param str_target target variable
+#' #' @param q_segments quantity of segments to split str_score_var, valid values: 5, 10 or 20
+#' #' @examples
+#' #' fit_glm=glm(has_heart_disease ~ age + oldpeak, data=heart_disease, family = binomial)
+#' #' heart_disease$score=predict(fit_glm, newdata=heart_disease, type='response')
+#' #' lift_table(data=heart_disease,str_score='score',str_target='has_heart_disease')
+#' 
+#' #' @return lift/gain table, column: gain implies how much positive cases are catched if the cut point to define the positive class is set to the column "Score Point"
+#' #' @export
+#' lift_table <- function(data, str_score, str_target, q_segments)
+#' {
+#' 	# The negative score produces that the highest score are at the top
+#' 	data$neg_score=-data[, str_score]
+#' 
+#' 	# Valid values for q_segments
+#' 	if(missing(q_segments))
+#' 		q_segments=10
+#' 
+#' 	if(q_segments==20)
+#' 		seq_v=seq(from=0.05, to=0.95, by=0.05)
+#' 
+#' 	if(q_segments==10 | !(q_segments %in% c(5,10,20)))
+#' 		seq_v=seq(from=0.1, to=0.9, by=0.1)
+#' 
+#' 	if(q_segments==5)
+#' 		seq_v=seq(from=0.2, to=0.8, by=0.2)
+#' 
+#' 	quantile_cuts=quantile(data$neg_score, probs=seq_v)
+#' 
+#' 	data[,str_target]=as.character(data[,str_target])
+#' 
+#' 	grp=dplyr::group_by(data, data[,str_target]) %>% dplyr::summarise(q=n()) %>% dplyr::arrange(q)
+#' 
+#' 	less_representative_class=as.character(grp[1,1])
+#' 
+#' 	lift_table=round(100*sapply(quantile_cuts, function(x) sum(data[data$neg_score<=x, str_target]==less_representative_class))/sum(data[, str_target]==less_representative_class),2)
+#' 
+#' 	lift_res=rbind(lift_table,-quantile_cuts)
+#' 	rownames(lift_res)=c("Gain", "Score Point")
+#' 	lift_res[1,]=round(lift_res[1,],2)
+#' 	print(lift_res)
+#' }
 
