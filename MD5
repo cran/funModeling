@@ -1,12 +1,12 @@
-499c9725528795487a3db1a2d77f0074 *DESCRIPTION
-401d1c236fd6a215e9005cacad319a38 *NAMESPACE
+9f689e5a32eb47f477c7343107a06bab *DESCRIPTION
+03b5b4ac9f824450f9348810727f4218 *NAMESPACE
 a970607d44add2b61e39d5b4dffd064b *NEWS
 e9bdbc4116b8ee18584002a27d320e94 *R/attach.R
 a572ee527704790038f2bcb5822c6788 *R/common_lib.R
-f129d691b7b0048a99c9f86145ade407 *R/cross_plot.R
+c67f751f87866e5d832a351ae6d94bf8 *R/cross_plot.R
 20e1c805146c91db4a16e71cf4409bf6 *R/data.R
-56099c7ce50bbdabf4502069e70969d0 *R/models_lib.R
-48827e876667ff2c7ad69d68962223ee *R/numbers.R
+f430e48bad22d6455dc1da7efc8753dc *R/models_lib.R
+e5b4f658a4fc84c578d9415ffbc060d0 *R/numbers.R
 0ecb53ccf79b386b16f45b273f7dbc35 *R/target_profiling.R
 4a5ec426aa6bfd45284b52a247cf2f73 *data/heart_disease.rda
 092b4390837f5dd0e74871ce9cf0a6ac *man/correlation_table.Rd
@@ -14,6 +14,8 @@ f129d691b7b0048a99c9f86145ade407 *R/cross_plot.R
 6fce921d60e640bba233d3abec2390ac *man/df_status.Rd
 d170f0e6dd7c9922a860b7bd6e22cbb5 *man/equal_freq.Rd
 271837dafd0929113e0d0097865ed4b0 *man/filter_vars.Rd
+2df8281a40f51024ad61227be99d73a2 *man/freq.Rd
+24c6cd2e2ede9981afd00691d90bf1e3 *man/gain_lift.Rd
 4368236047dfe0ffe761faf28910cf00 *man/get_sample.Rd
 ed7f4ec764fdc36d6e260db8dfc281c5 *man/heart_disease.Rd
 cae6c24dce4f5d5b6c59260194e747c9 *man/model_performance.Rd
