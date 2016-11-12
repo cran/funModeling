@@ -19,7 +19,7 @@ df_status <- function(data, print_results)
 		p_na=round(100*sapply(data, function(x) sum(is.na(x)))/nrow(data),2),
 		q_inf=sapply(data, function(x) sum(is.infinite(x))),
 		p_inf=round(100*sapply(data, function(x) sum(is.infinite(x)))/nrow(data),2),
-		type=sapply(data, class),
+		type=sapply(data, get_type_v),
 		unique=sapply(data, function(x) sum(!is.na(unique(x))))
 	)
 
@@ -33,6 +33,22 @@ df_status <- function(data, print_results)
 	## Print or return results
 	if(print_results) print(df_status_res) else return(df_status_res)
 }
+
+is.POSIXct <- function(x) inherits(x, "POSIXct")
+is.POSIXlt <- function(x) inherits(x, "POSIXlt")
+is.POSIXt <- function(x) inherits(x, "POSIXt")
+
+get_type_v <- function(x)
+{
+	## handler for posix object, because class function returns a list in this case
+	posix=ifelse(is.POSIXct(x), "POSIXct", "")
+	posix=ifelse(is.POSIXlt(x), paste(posix, "POSIXlt", sep="/"), posix)
+	posix=ifelse(is.POSIXt(x), paste(posix, "POSIXt", sep="/"), posix)
+
+	# ifnot posix..then something else
+	ifelse(posix=="", return(class(x)), return(posix))
+}
+
 
 
 #' @title Get model perfomance metrics (KS, AUC and ROC)
@@ -127,8 +143,9 @@ get_sample <- function(data, percentage_tr_rows=0.8, seed=987)
 #' @export
 gain_lift <- function(data, str_score, str_target, q_segments)
 {
+	options(scipen = 999)
 	# The negative score produces that the highest score are at the top
-	# data=heart_disease; str_score='score'; str_target='has_heart_disease'; q_segments='10'
+	# data=heart_disease; str_score='score'; str_target='has_heart_disease'; q_segments='5'
 	data$neg_score=-data[, str_score]
 
 	# Valid values for q_segments
@@ -154,12 +171,10 @@ gain_lift <- function(data, str_score, str_target, q_segments)
 
 	less_representative_class=as.character(grp[1,1])
 
-
 	lift_table=round(100*sapply(quantile_cuts, function(x) sum(data[data$neg_score<=x, str_target]==less_representative_class))/sum(data[, str_target]==less_representative_class),2)
 
-
 	lift_res=rbind(lift_table,-quantile_cuts)
-	rownames(lift_res)=c("Gain", "Score Point")
+	rownames(lift_res)=c("Gain", "Score.Point")
 
 	# likelihood of being less representative class (lrc)
 	likelihood_lrc=grp[1,2]/(grp[2,2]+grp[1,2])
@@ -169,9 +184,6 @@ gain_lift <- function(data, str_score, str_target, q_segments)
 	lift_res_t$Population=as.numeric(100*seq_v)
 	row.names(lift_res_t)=NULL
 	lift_res_t=select(lift_res_t, Population, Gain, Score.Point)
-
-	## Generate population factor variable to correclty display
-	#lift_res_t$Population = factor(lift_res_t$Population, levels =  lift_res_t$Population[order(seq_v)])
 
 	## Generate lift variable
 	lift_res_t$Lift=round(lift_res_t$Gain/100/seq_v,2)
@@ -190,7 +202,8 @@ gain_lift <- function(data, str_score, str_target, q_segments)
 			axis.title.x=element_text(margin=margin(15,0,0,0)),
 			axis.title.y=element_text(margin=margin(0,15,0,0))
 		)+geom_label(aes(fill = factor(Gain)), colour = "white", fontface = "bold",vjust = -.5, label.padding = unit(.2, "lines")) + ylim(0, 110)  +
-			guides(fill=F) +  scale_colour_continuous(guide = FALSE) + xlim(-2, 105) + geom_segment(x = 0, y = 0, xend = 100, yend = 100,linetype="dotted")
+			guides(fill=F) +  scale_colour_continuous(guide = FALSE)  +
+		geom_segment(x = 0, y = 0, xend = 100, yend = 100,linetype="dotted") + scale_x_continuous(breaks = c(0, seq(10, 100, by=10)))
 
 
 	p_lift=
@@ -205,7 +218,7 @@ gain_lift <- function(data, str_score, str_target, q_segments)
 			axis.title.x=element_text(margin=margin(15,0,0,0)),
 			axis.title.y=element_text(margin=margin(0,15,0,0))
 		)+geom_label(aes(fill=-Lift), size=3.5, colour="white", vjust = -.5, label.padding = unit(.2, "lines")) + ylim(min(lift_res_t$Lift), max(lift_res_t$Lift*1.1)) +
-			guides(fill=F) + scale_colour_continuous(guide = FALSE) + xlim(-2, 102)
+			guides(fill=F) + scale_colour_continuous(guide = FALSE) + scale_x_continuous(breaks = c(0, seq(10, 100, by=10)))
 
 
 
