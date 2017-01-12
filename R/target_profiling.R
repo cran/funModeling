@@ -2,13 +2,14 @@
 #' @description Visual correlation analysis. Plot different graphs in order to expose the inner information of any numeric variable against the target variable
 #' @param data data frame source
 #' @param str_input string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.
-#' @param str_target string of the variable to predict
+#' @param str_target string of the variable to predict, it supports binary or multinominal values.
 #' @param plot_type Indicates the type of plot to retrieve, available values: "boxplot" or "histdens".
 #' @param path_out path directory, if it has a value the plot is saved
 #' @examples
 #' ## Run for all numeric variables
 #' plotar(data=heart_disease, str_target="has_heart_disease",
 #' 	plot_type="histdens")
+#' plotar(heart_disease, str_input = 'age', str_target = 'chest_pain', plot_type = "boxplot")
 #' @return Single or multiple plots specified by 'plot_type' parameter
 #' @export
 plotar <- function(data, str_input, str_target, plot_type, path_out)
@@ -26,7 +27,7 @@ plotar <- function(data, str_input, str_target, plot_type, path_out)
 
 	data=remove_na_target(data, str_target=str_target)
 
-	check_target_2_values(data, str_target=str_target)
+	#check_target_2_values(data, str_target=str_target)
 
 	## Convert to factor target variable
 	data[,str_target]=as.factor(data[,str_target])
@@ -122,4 +123,83 @@ boxplot_target <- function(data, str_input, str_target)
 
 	return(plot_box)
 }
+
+#' @title Profiling analysis of categorical vs. target variable
+#' @description Retrieves a complete summary of the grouped input variable against the target variable. Type of target variable must be binary for now. A positive case will be the less representative one. It returns the total positive cases (sum_target)); pecentage of total positive cases (perc_target) that fell in that category (this column sums 1); likelihood or mean of positive cases (mean_target) measured by the total positive cases over total cases in that category; quantity of rows of that category (q_rows) and in percentage (perc_rows) -this column sums 1. Full documentation can be found at: <http://http://livebook.datascienceheroes.com/data_preparation/high_cardinality_predictive_modeling.html/>.
+#' @param data input data containing the variable to describe
+#' @param input string input variable (if empty, it runs for all categorical variable), it can take a single character value or a character vector.
+#' @param target string target variable. Binary or two class is only supported by now.
+#' @examples
+#' categ_analysis(data_country, "country", "has_flu")
+#' @return if str_input has 1 variable, it retrurns a data frame indicating all the metrics, otherwise prints in console all variable results.
+#' @export
+categ_analysis<-function(data, input, target)
+{
+	data=as.data.frame(data)
+
+	## Parameters & Error handlers #####################
+	check_target_existence(data, str_target=target)
+
+	data=remove_na_target(data, str_target=target)
+
+	check_target_2_values(data, str_target=target)
+	#####################################################
+
+	## If missing it runs for all categorical variables
+	if(missing(input))
+	{
+		data_2=data[, !(names(data) %in% target)]
+		input=give_me_character_vars(data_2)
+	}
+
+	## Iterator
+	q_vars=length(input)
+	if(q_vars==1)
+	{
+		res=categ_analysis_logic(data = data, input=input, target=target)
+		return(res)
+	} else {
+		for(i in 1:q_vars)
+		{
+			res=categ_analysis_logic(data = data, input=input[i], target=target)
+			print(res)
+			cat("", sep="\n")
+		}
+
+		cat("", sep="\n")
+		return(sprintf("Variables processed: %s", paste(input, collapse = ", ")))
+	}
+
+}
+
+categ_analysis_logic <- function(data, input, target)
+{
+	## Infering positive class as the less representative class.
+	data[,target]=as.character(data[,target])
+	grp_class=group_by(data, data[,target]) %>% summarise(q=n()) %>% arrange(q)
+	pred_class=as.character(grp_class[1,1])
+	tot_pos=sum(data[,target]==pred_class)
+
+	## profiling
+	grp=group_by_(data, input) %>% summarise_(
+					mean_target=interp(~round(mean(var==pred_class, na.rm = TRUE), 3), var = as.name(target)),
+					sum_target=interp(~sum(var==pred_class, na.rm = TRUE), var = as.name(target)),
+					perc_target=interp(~round(sum(var==pred_class, na.rm = TRUE)/tot_pos,3), var = as.name(target)),
+					q_rows=~n(),
+					perc_rows=~round(n()/nrow(data), 3)
+	) %>% arrange(-mean_target)
+
+	#colnames(grp)[colnames(grp)=='sum_target']=paste("sum", target, sep="_")
+	#colnames(grp)[colnames(grp)=='perc_target']=paste("perc", target, sep="_")
+	#colnames(grp)[colnames(grp)=='mean_target']=paste("mean", target , sep="_")
+
+	grp=data.frame(grp, stringsAsFactors = F)
+
+	#print(sprintf("Variable: '%s'", input))
+
+#	colnames(grp)[1]="category"
+
+	return(grp)
+}
+
 
