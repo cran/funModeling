@@ -24,9 +24,11 @@ Single or multiple plots specified by 'plot_type' parameter
 Visual correlation analysis. Plot different graphs in order to expose the inner information of any numeric variable against the target variable
 }
 \examples{
+\dontrun{
 ## Run for all numeric variables
 plotar(data=heart_disease, str_target="has_heart_disease",
 	plot_type="histdens")
 plotar(heart_disease, str_input = 'age', str_target = 'chest_pain', plot_type = "boxplot")
+}
 }
 

@@ -1,20 +1,24 @@
-utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","variable","geom_bar","geom_text","position","guides","labs","theme","element_text","scale_y_continuous","position_dodge","ylim","guide_legend","scale_fill_discrete", "aes_string", "geom_boxplot","stat_summary", "theme_bw", "freq", "geom_vline", "geom_density", "margin", "scale_colour_continuous",'Var1','label','coord_flip','ylab','xlab','geom_label','unit','Population','Gain','Score.Point','geom_line','geom_point','xlim','geom_segment','Lift', 'Freq', 'sum_pos', 'likelih','mean_target'),package = "funModeling", add = F)
+utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","variable","geom_bar","geom_text","position","guides","labs","theme","element_text","scale_y_continuous","position_dodge","ylim","guide_legend","scale_fill_discrete", "aes_string", "geom_boxplot","stat_summary", "theme_bw", "freq", "geom_vline", "geom_density", "margin", "scale_colour_continuous",'Var1','label','coord_flip','ylab','xlab','geom_label','unit','Population','Gain','Score.Point','geom_line','geom_point','xlim','geom_segment','Lift', 'Freq', 'sum_pos', 'likelih','.','one_of','grp_mean', 'mean_target',"'colorRampPalette","head","tail","rbeta"), package = "funModeling", add = F)
 
 
 #' @importFrom grDevices dev.off jpeg rainbow
 #' @importFrom graphics abline grid
-#' @importFrom stats predict frequency kmeans
+#' @importFrom stats predict frequency
 #' @importFrom pander pandoc.table
 #' @importFrom  Hmisc cut2
 #' @import  ggplot2
 #' @import dplyr
 #' @importFrom reshape2 dcast melt
-#' @importFrom utils packageVersion head tail
+#' @importFrom utils packageVersion
 #' @importFrom scales percent
 #' @importFrom lazyeval interp
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ROCR prediction performance plot
-#' @importFrom stats cor quantile rbeta
+#' @importFrom stats cor quantile
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom grDevices colorRampPalette
+#' @importFrom stats kmeans rbeta hclust cutree dist
+#' @importFrom utils head tail
 
 #' @title Cross-plotting input variable vs. target variable
 #' @description The cross_plot shows how the input variable is correlated with the target variable, getting the likelihood rates for each input's bin/bucket .
@@ -25,6 +29,7 @@ utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","vari
 #' @param auto_binning indicates the automatic binning of str_input variable based on equal frequency (function 'equal_freq'), default value=TRUE
 #' @param plot_type indicates if the output is the 'percentual' plot, the 'quantity' or 'both' (default).
 #' @examples
+#' \dontrun{
 #' ## Example 1:
 #' cross_plot(data=heart_disease, str_input="chest_pain", str_target="has_heart_disease")
 #'
@@ -39,7 +44,7 @@ utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","vari
 #' ## Example 4: Running with multiple input variables at the same time:
 #' cross_plot(data=heart_disease, str_input=c("age", "oldpeak", "max_heart_rate"),
 #' 		str_target="has_heart_disease")
-#'
+#'}
 #' @return cross plot
 #' @export
 cross_plot <- function(data, str_input, str_target, path_out, auto_binning, plot_type='both')
