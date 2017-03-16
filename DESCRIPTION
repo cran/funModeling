@@ -2,8 +2,8 @@ Package: funModeling
 Type: Package
 Title: Learn Data Science Through the "Data Science Live Book"
 Description: Around 10% of almost any predictive modeling project is spent in predictive modeling, 'funModeling' and the book <http://livebook.datascienceheroes.com/> are intended to cover remaining 90%: data preparation, profiling, selecting best variables 'dataViz', assessing model performance and other functions.
-Version: 1.6.1
-Date: 2017-02-24
+Version: 1.6.2
+Date: 2017-03-16
 Author: Pablo Casas
 Maintainer: Pablo Casas <pcasas.biz@gmail.com>
 License: GPL-2
@@ -15,6 +15,6 @@ Imports: ROCR, ggplot2, gridExtra, pander, reshape2, scales, dplyr,
 Depends: R (>= 3.2.1), Hmisc (>= 3.17.1)
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2017-02-25 18:13:23 UTC; Usuario
+Packaged: 2017-03-16 22:48:25 UTC; Usuario
 Repository: CRAN
-Date/Publication: 2017-02-26 00:22:02
+Date/Publication: 2017-03-16 23:12:10 UTC
