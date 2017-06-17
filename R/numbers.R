@@ -165,30 +165,58 @@ prep_outliers <- function(data, str_input=NA, type=c('stop', 'set_na'), top_perc
 	## Logic for top value
 	if(!missing(top_percent))
 	{
-	  for(i in 1:length(str_input))
-	  {
-	   	top_value=quantile(data[,str_input[i]], probs=(1-top_percent), names=F, na.rm=T)
-	   	data[, str_input[i]][data[, str_input[i]]>=top_value]=ifelse(type=='stop', top_value, NA)
+		warn_mess_top=NA
+		for(i in 1:length(str_input))
+		{
+			top_value=quantile(data[,str_input[i]], probs=(1-top_percent), names=F, na.rm=T)
+			bkp_var=data[, str_input[i]]
+			data[, str_input[i]][data[, str_input[i]]>=top_value]=ifelse(type=='stop', top_value, NA)
 
-	   	if(length(na.omit(unique(data[, str_input[i]])))==1)
-	   	{
-	   		warning(sprintf("The transformation left the variable '%s' with 1 unique value. Please consider setting the threshold less restrictive.", str_input[i]))
-	   	}
-	  }
+			if(length(na.omit(unique(data[, str_input[i]])))==1)
+			{
+				data[, str_input[i]]=bkp_var
+				if(is.na(warn_mess_top))
+				{
+					warn_mess_top=str_input[i]
+				} else {
+					warn_mess_top=paste(warn_mess_top, str_input[i], sep=", ")
+				}
+			}
+		}
+
+		if(!is.na(warn_mess_top))
+		{
+			warning(sprintf("Skip the transformation (top value) for some variables because the threshold would have left them with 1 unique value. Variable list printed in the console."))
+			print(sprintf("Variables to adjust top threshold: %s", warn_mess_top))
+		}
 	}
 
 	## Logic for bottom value
 	if(!missing(bottom_percent))
 	{
-	  for(i in 1:length(str_input))
-	  {
-	   	bottom_value=quantile(data[,str_input[i]], probs=bottom_percent, names=F, na.rm=T)
-	   	data[, str_input[i]][data[, str_input[i]]<=bottom_value]=ifelse(type=='stop', bottom_value, NA)
-	  }
-
-		if(length(na.omit(unique(data[, str_input[i]])))==1)
+		warn_mess_bott=NA
+		for(i in 1:length(str_input))
 		{
-			warning(sprintf("The transformation left the variable '%s' with 1 unique value. Please consider setting the threshold less restrictive.", str_input[i]))
+			bottom_value=quantile(data[,str_input[i]], probs=bottom_percent, names=F, na.rm=T)
+			bkp_var=data[, str_input[i]]
+			data[, str_input[i]][data[, str_input[i]]<=bottom_value]=ifelse(type=='stop', bottom_value, NA)
+
+			if(length(na.omit(unique(data[, str_input[i]])))==1)
+			{
+				data[, str_input[i]]=bkp_var
+				if(is.na(warn_mess_bott))
+				{
+					warn_mess_bott=str_input[i]
+				} else {
+					warn_mess_bott=paste(warn_mess_bott, str_input[i], sep=", ")
+				}
+			}
+		}
+
+		if(!is.na(warn_mess_bott))
+		{
+			warning(sprintf("Skip the transformation (bottom value) for some variables because the threshold would have left them with 1 unique value. Variable list printed in the console."))
+			print(sprintf("Variables to adjust bottom threshold: %s", warn_mess_bott))
 		}
 	}
 
@@ -342,7 +370,8 @@ freq <- function(data, str_input=NA, plot=T, na.rm=T, path_out)
 
 freq_logic <- function(data, str_input, plot, na.rm, path_out)
 {
-	if(na.rm) {
+	if(!na.rm) {
+		# if exclude = NULL then it adds the NA cases
 		tbl=data.frame(table(factor(data[,str_input], exclude = NULL)))
 	} else {
 		tbl=data.frame(table(data[,str_input]))

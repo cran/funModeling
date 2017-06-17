@@ -1,13 +1,13 @@
-7a3863edd8ba4d22be8de13f9b14f4ad *DESCRIPTION
+54e1e2c64f32569e7a47ef57f6bdfc4b *DESCRIPTION
 27338e5d1cf95d335d9685d6c05544a2 *NAMESPACE
 b250143364fe56eef986054fbd51b74f *R/attach.R
 dcf0f1b665383d2bae7565f6c868cab4 *R/bayesian_plot.R
 fb659edab8036c5864e9cbfabb4a839b *R/common_lib.R
 4521e744a2942c8a57a29e7c3c4b8a76 *R/cross_plot.R
 5ab372bba99690800030bb97107f47a6 *R/data.R
-80246d8078ff59a67256e715413c08d1 *R/data_preparation.R
+58530e5ce79babe88fe53fce7c71de4c *R/data_preparation.R
 930ce6d546954e2ddf26d393d41f5845 *R/models_lib.R
-529fe5efa13aa3e6997ea855f9e53a34 *R/numbers.R
+29f6e003d1d3f41e9ecb949acf89cfd2 *R/numbers.R
 6cdc20f602433a390a5887ab3a5a6c75 *R/target_profiling.R
 a5ab6555b7a143a87d6efcaff665775d *data/data_country.rda
 4a5ec426aa6bfd45284b52a247cf2f73 *data/heart_disease.rda
