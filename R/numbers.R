@@ -35,9 +35,21 @@ profiling_num <- function(data, print_results=T, digits=2)
 {
 	options(digits=digits)
 
+	## If str_input is NA then ask for a single vector. True if it is a single vector
+	if(mode(data) %in% c("logical","numeric","complex","character"))
+	{
+		# creates a ficticious variable called 'var'
+		data=data.frame(var=data)
+		str_input="var"
+	}
+
 	## Keeping all non factor nor char variables
 	status=df_status(data, print_results = F)
-	vars_num=filter(status,!(type %in% c("character", "factor"))) %>% .$variable
+	vars_num=filter(status, type %in% c("numeric", "integer", "logical")) %>% .$variable
+
+	if(length(vars_num)==0)
+		stop("None of the input variables are numeric, integer nor logical")
+
 	data_num=select(data, one_of(vars_num))
 
 	if(missing(print_results))
@@ -81,148 +93,6 @@ profiling_num <- function(data, print_results=T, digits=2)
 
 
 
-#' @title Outliers Data Preparation
-#' @description
-#' Deal with outliers by setting an 'NA value' or by 'stopping' them at a certain. The parameters: 'top_percent'/'bottom_percent' are used to consider a value as outlier.
-#'
-#' Setting NA is recommended when doing statistical analysis, parameter: type='set_na'.
-#' Stopping is recommended when creating a predictive model without biasing the result due to outliers, parameter: type='stop'.
-#'
-#' The function can take a data frame, and returns the same data plus the transformations specified in the str_input parameter. Or it can take a single vector (in the same 'data' parameter), and it returns a vector.
-#'
-#' @param data a data frame or a single vector. If it's a data frame, the function returns a data frame, otherwise it returns a vector.
-#' @param str_input string input variable (if empty, it runs for all numeric variable).
-#' @param top_percent value from 0 to 1, represents the highest X percentage of values to treat
-#' @param bottom_percent value from 0 to 1, represents the lowest X percentage of values to treat
-#' @param type can be 'stop' or 'set_na', in the first case the original variable is stopped at the desiered percentile, 'set_na'  sets NA to the same values.
-#' @examples
-#' \dontrun{
-#' # Creating data frame with outliers
-#' set.seed(10)
-#' df=data.frame(var1=rchisq(1000,df = 1), var2=rnorm(1000))
-#' df=rbind(df, 1135, 2432) # forcing outliers
-#' df$id=as.character(seq(1:1002))
-#'
-#' # for var1: mean is ~ 4.56, and max 2432
-#' summary(df)
-#'
-#' ########################################################
-#' ### PREPARING OUTLIERS FOR DESCRIPTIVE STATISTICS
-#' ########################################################
-#'
-#' #### EXAMPLE 1: Removing top 1%% for a single variable
-#' # checking the value for the top 1% of highest values (percentile 0.99), which is ~ 7.05
-#' quantile(df$var1, 0.99)
-#'
-#' # Setting type='set_na' sets NA to the highest value specified by top_percent.
-#' # In this case 'data' parameter is single vector, thus it returns a single vector as well.
-#' var1_treated=prep_outliers(data = df$var1, type='set_na', top_percent  = 0.01)
-#'
-#' # now the mean (~ 1) is more accurate, and note that: 1st, median and 3rd
-#' #  quartiles remaining very similar to the original variable.
-#' summary(var1_treated)
-#'
-#' #### EXAMPLE 2: Removing top and bottom 1% for the specified input variables.
-#' vars_to_process=c('var1', 'var2')
-#' df_treated3=prep_outliers(data = df, str_input = vars_to_process, type='set_na',
-#'  bottom_percent = 0.01, top_percent  = 0.01)
-#' summary(df_treated3)
-#'
-#' ########################################################
-#' ### PREPARING OUTLIERS FOR PREDICTIVE MODELING
-#' ########################################################
-#'
-#' #### EXAMPLE 3: Stopping outliers at the top 1%% value for all variables. For example
-#' #   if the top 1%% has a value of 7, then all values above will be set to 7. Useful
-#' #   when modeling because outlier cases can be used.
-#' df_treated4=prep_outliers(data = df, top_percent  = 0.01, type='stop')
-#' }
-#' @return A data frame with the desired outlier transformation
-#' @export
-prep_outliers <- function(data, str_input=NA, type=c('stop', 'set_na'), top_percent, bottom_percent)
-{
-	if(!(type %in% c('stop', 'set_na')))
-		stop("Parameter 'type' must be one 'stop' or 'set_na'")
-
-	## If str_input is NA then ask for a single vector. True if it is a single vector
-	if(sum(is.na(str_input)>0) & mode(data) %in% c("logical","numeric","complex","character"))
-	{
-		# creates a ficticious variable called 'var'
-		data=data.frame(var=data)
-		str_input="var"
-		input_one_var=TRUE
-	} else {
-		input_one_var=FALSE
-	}
-
-
-	#########################################################
-	### Stopping and Setting NA processing
-	#########################################################
-	if(missing(top_percent) & missing(bottom_percent))
-		stop("Parameters 'top_percent' and 'bottom_percent' cannot be missing at the same time")
-
-	## Logic for top value
-	if(!missing(top_percent))
-	{
-		warn_mess_top=NA
-		for(i in 1:length(str_input))
-		{
-			top_value=quantile(data[,str_input[i]], probs=(1-top_percent), names=F, na.rm=T)
-			bkp_var=data[, str_input[i]]
-			data[, str_input[i]][data[, str_input[i]]>=top_value]=ifelse(type=='stop', top_value, NA)
-
-			if(length(na.omit(unique(data[, str_input[i]])))==1)
-			{
-				data[, str_input[i]]=bkp_var
-				if(is.na(warn_mess_top))
-				{
-					warn_mess_top=str_input[i]
-				} else {
-					warn_mess_top=paste(warn_mess_top, str_input[i], sep=", ")
-				}
-			}
-		}
-
-		if(!is.na(warn_mess_top))
-		{
-			warning(sprintf("Skip the transformation (top value) for some variables because the threshold would have left them with 1 unique value. Variable list printed in the console."))
-			print(sprintf("Variables to adjust top threshold: %s", warn_mess_top))
-		}
-	}
-
-	## Logic for bottom value
-	if(!missing(bottom_percent))
-	{
-		warn_mess_bott=NA
-		for(i in 1:length(str_input))
-		{
-			bottom_value=quantile(data[,str_input[i]], probs=bottom_percent, names=F, na.rm=T)
-			bkp_var=data[, str_input[i]]
-			data[, str_input[i]][data[, str_input[i]]<=bottom_value]=ifelse(type=='stop', bottom_value, NA)
-
-			if(length(na.omit(unique(data[, str_input[i]])))==1)
-			{
-				data[, str_input[i]]=bkp_var
-				if(is.na(warn_mess_bott))
-				{
-					warn_mess_bott=str_input[i]
-				} else {
-					warn_mess_bott=paste(warn_mess_bott, str_input[i], sep=", ")
-				}
-			}
-		}
-
-		if(!is.na(warn_mess_bott))
-		{
-			warning(sprintf("Skip the transformation (bottom value) for some variables because the threshold would have left them with 1 unique value. Variable list printed in the console."))
-			print(sprintf("Variables to adjust bottom threshold: %s", warn_mess_bott))
-		}
-	}
-
-	ifelse(input_one_var,  return(data$var), return(data))
-
-}
 
 #' @title Compare two vectors
 #' @description Obtaing coincident and not coincident elements between two vectors.
@@ -318,14 +188,14 @@ range01 <- function(var)
 #' @param data input data containing the variable to describe
 #' @param str_input string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.
 #' @param plot flag indicating if the plot is desired, TRUE by default
-#' @param na.rm flag indicating if NA values must be included in the analysis, TRUE by default
+#' @param na.rm flag indicating if NA values must be included in the analysis, FALSE by default
 #' @param path_out path directory, if it has a value the plot is saved
 #' @examples
 #' freq(data=heart_disease$thal)
 #' freq(data=heart_disease, str_input = c('thal','chest_pain'))
 #' @return vector with the values scaled into the 0 to 1 range
 #' @export
-freq <- function(data, str_input=NA, plot=T, na.rm=T, path_out)
+freq <- function(data, str_input=NA, plot=TRUE, na.rm=FALSE, path_out)
 {
 	if(missing(path_out)) path_out=NA
 
