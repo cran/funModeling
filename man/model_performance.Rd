@@ -17,10 +17,9 @@ model_performance(fit, data, target_var)
 None.
 }
 \description{
-Get model performance for tree models (rpart library), or glm. It returns quality metrics: AUC (Area Under ROC Curve) and KS (Kolmogorov-Smirnov), and plots the ROC curve.
+NOTE: This function will be deprecated! Get model performance for tree models (rpart library), or glm. It returns quality metrics: AUC (Area Under ROC Curve) and KS (Kolmogorov-Smirnov), and plots the ROC curve.
 }
 \examples{
 fit_glm=glm(has_heart_disease ~ age + oldpeak, data=heart_disease, family = binomial)
 model_performance(fit=fit_glm, data = heart_disease, target_var = "has_heart_disease")
 }
-

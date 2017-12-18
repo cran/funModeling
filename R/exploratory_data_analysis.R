@@ -1,6 +1,6 @@
 #' @title Plotting numerical data
 #' @description
-#' One plot containing all the histograms for numerical variables. NA values will not be displayed.
+#' Retrieves one plot containing all the histograms for numerical variables. NA values will not be displayed.
 #' @param data data frame
 #' @param bins number of bars (bins) to plot each histogram, 10 by default
 #' @examples
@@ -171,17 +171,71 @@ correlation_table <- function(data, str_target)
 
 
 
-#' @title Transform a variable into the [0-1] range
-#' @description Range a variable into [0-1], assigning 0 to the min and 1 to the max of the input variable. All NA values will be removed.
-#' @param var numeric input vector
+#' @title Get a summary for the given data frame (o vector).
+#' @description For each variable it returns: Quantity and percentage of zeros (q_zeros and p_zeros respectevly). Same metrics for NA values (q_NA/p_na), and infinite values (q_inf/p_inf). Last two columns indicates data type and quantity of unique values.
+#' This function print and return the results.
+#' @param data data frame or a single vector
+#' @param print_results if FALSE then there is not a print in the console, TRUE by default.
 #' @examples
-#' range01(mtcars$cyl)
-#' @return vector with the values scaled into the 0 to 1 range
+#' df_status(heart_disease)
+#' @return Metrics data frame
 #' @export
-range01 <- function(var)
+df_status <- function(data, print_results)
 {
-	return((var-min(var, na.rm=T))/(max(var, na.rm=T)-min(var, na.rm=T)))
+	## If str_input is NA then ask for a single vector. True if it is a single vector
+	if(mode(data) %in% c("logical","numeric","complex","character"))
+	{
+		# creates a ficticious variable called 'var'
+		data=data.frame(var=data)
+		str_input="var"
+	}
+
+	if(missing(print_results))
+		print_results=T
+
+	df_status_res=data.frame(
+		q_zeros=sapply(data, function(x) sum(x==0,na.rm=T)),
+		p_zeros=round(100*sapply(data, function(x) sum(x==0,na.rm=T))/nrow(data),2),
+		q_na=sapply(data, function(x) sum(is.na(x))),
+		p_na=round(100*sapply(data, function(x) sum(is.na(x)))/nrow(data),2),
+		q_inf=sapply(data, function(x) sum(is.infinite(x))),
+		p_inf=round(100*sapply(data, function(x) sum(is.infinite(x)))/nrow(data),2),
+		type=sapply(data, get_type_v),
+		unique=sapply(data, function(x) sum(!is.na(unique(x))))
+	)
+
+	## Create new variable for column name
+	df_status_res$variable=rownames(df_status_res)
+	rownames(df_status_res)=NULL
+
+	## Reordering columns
+	df_status_res=df_status_res[, c(9,1,2,3,4,5,6,7,8)]
+
+	## Print or return results
+	if(print_results) print(df_status_res) else return(df_status_res)
 }
+
+is.POSIXct <- function(x) inherits(x, "POSIXct")
+is.POSIXlt <- function(x) inherits(x, "POSIXlt")
+is.POSIXt <- function(x) inherits(x, "POSIXt")
+
+get_type_v <- function(x)
+{
+	## handler for posix object, because class function returns a list in this case
+	posix=ifelse(is.POSIXct(x), "POSIXct", "")
+	posix=ifelse(is.POSIXlt(x), paste(posix, "POSIXlt", sep="/"), posix)
+	posix=ifelse(is.POSIXt(x), paste(posix, "POSIXt", sep="/"), posix)
+
+	# ifnot posix..then something else
+	if(posix=="")
+	{
+		cl=class(x)
+		return(ifelse(length(cl)>1, paste(cl, collapse = "-"), cl))
+	} else {
+		return(posix)
+	}
+}
+
 
 #' @title Frequency table for categorical variables
 #' @description Retrieves the frequency and percentage for str_input
@@ -325,4 +379,114 @@ freq_logic <- function(data, str_input, plot, na.rm, path_out)
 	if(exists("message_high_card")) {warning(message_high_card)}
 
 	return(tbl)
+}
+
+
+#' @title Compare two data frames by keys
+#' @description Obtain differences between two data frames
+#' @param dfcomp_x first data frame to compare
+#' @param dfcomp_y second data frame to compare
+#' @param keys_x keys of the first dataframe
+#' @param keys_y (optional) keys of the second dataframe, if missing both data frames will be compared with the keys_x
+#' @param compare_values (optional) if TRUE it will not only compare keys, but also will check if the values of non-key matching columns have the same values
+#' @examples
+#' data(heart_disease)
+#' a=heart_disease
+#' b=heart_disease
+#' a=subset(a, age >45)
+#' b=subset(b, age <50)
+#' b$gender='male'
+#' b$chest_pain=ifelse(b$chest_pain ==3, 4, b$chest_pain)
+#' res=compare_df(a, b, c('age', 'gender'))
+#' # Print the keys that didn't match
+#' res
+#' # Accessing the keys not present in the first data frame
+#' res[[1]]$rows_not_in_X
+#' # Accessing the keys not present in the second data frame
+#' res[[1]]$rows_not_in_Y
+#' # Accessing the keys which coincide completely
+#' res[[1]]$coincident
+#' # Accessing the rows whose values did not coincide
+#' res[[1]]$different_values
+#' @return Differences and coincident values
+#' @export
+compare_df <- function(dfcomp_x, dfcomp_y, keys_x, keys_y=NA, compare_values=FALSE)
+{
+	#Setup internal flags for merging data
+	internal_flags = c('comparedf_flag_x', 'comparedf_flag_y', 'comparedf_flag_equal')
+  dfcomp_x$comparedf_flag_x=1
+  dfcomp_y$comparedf_flag_y=1
+
+  #If keys_y is missing, it is equal to keys_x
+  if (missing(keys_y)){
+    keys_y = keys_x
+    all_keys = keys_x
+  }else{
+    all_keys = unique(c(keys_x, keys_y))
+  }
+
+  #Merge the input data frames
+  merge_all=merge(dfcomp_x, dfcomp_y, by.x=keys_x, by.y=keys_y, all=T)
+
+  #These are only the coincident keys
+  merge_all_nona=subset(merge_all, !is.na(merge_all$comparedf_flag_x) & !is.na(merge_all$comparedf_flag_y))
+
+  #Get non intersecting keys
+  not_in_x=merge_all[is.na(merge_all$comparedf_flag_x), keys_y]
+  not_in_y=merge_all[is.na(merge_all$comparedf_flag_y), keys_x]
+
+  #If there are coincident keys
+  if(nrow(merge_all_nona) > 0){
+
+  	#Search for different values in non-key columns
+    merge_all_nona$comparedf_flag_equal = TRUE
+    if(compare_values){
+	    for(varx in names(merge_all_nona)){
+	      if(grepl(".*\\.x", varx)){
+	        vary = gsub("\\.x", ".y", varx)
+	        merge_all_nona$comparedf_flag_equal = ifelse(as.character(merge_all_nona[[varx]]) != as.character(merge_all_nona[[vary]]), FALSE, merge_all_nona$comparedf_flag_equal)
+	      }
+	    }
+    }
+
+    #Print results
+    print(sprintf("Coincident keys: %s", nrow(merge_all_nona)))
+    if(compare_values){
+    	print(sprintf("Coincident entire rows: %s", nrow(merge_all_nona[merge_all_nona$comparedf_flag_equal == TRUE,])))
+   		print(sprintf("Coincident keys with different values: %s", nrow(merge_all_nona[merge_all_nona$comparedf_flag_equal == FALSE,])))
+    }
+
+    #Save results into output list
+    if(compare_values){
+    	list_diff=list(
+	      coincident=subset(merge_all_nona[,all_keys], merge_all_nona$comparedf_flag_equal == TRUE),
+	      different_values=subset(merge_all_nona[,!names(merge_all_nona) %in% internal_flags], merge_all_nona$comparedf_flag_equal == FALSE),
+	      rows_not_in_X=not_in_x,
+	      rows_not_in_Y=not_in_y
+	    )
+    }else{
+    	list_diff=list(
+	      coincident=merge_all_nona[,all_keys],
+	      rows_not_in_X=not_in_x,
+	      rows_not_in_Y=not_in_y
+	    )
+    }
+
+
+  #If no key coincides
+  }else{
+    print("No coincident keys")
+
+    list_diff=list(
+      rows_not_in_X=not_in_x,
+      rows_not_in_Y=not_in_y
+    )
+
+  }
+
+  #Print non-coincident keys
+  print(sprintf("Keys not present in X: %s", nrow(not_in_x)))
+  print(sprintf("Keys not present in Y: %s", nrow(not_in_y)))
+
+  return(list_diff)
 }

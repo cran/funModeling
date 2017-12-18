@@ -1,72 +1,5 @@
-#' @title Get a summary for the given data frame (o vector).
-#' @description For each variable it returns: Quantity and percentage of zeros (q_zeros and p_zeros respectevly). Same metrics for NA values (q_NA/p_na), and infinite values (q_inf/p_inf). Last two columns indicates data type and quantity of unique values.
-#' This function print and return the results.
-#' @param data data frame or a single vector
-#' @param print_results if FALSE then there is not a print in the console, TRUE by default.
-#' @examples
-#' df_status(heart_disease)
-#' @return Metrics data frame
-#' @export
-df_status <- function(data, print_results)
-{
-	## If str_input is NA then ask for a single vector. True if it is a single vector
-	if(mode(data) %in% c("logical","numeric","complex","character"))
-	{
-		# creates a ficticious variable called 'var'
-		data=data.frame(var=data)
-		str_input="var"
-	}
-
-	if(missing(print_results))
-		print_results=T
-
-	df_status_res=data.frame(
-		q_zeros=sapply(data, function(x) sum(x==0,na.rm=T)),
-		p_zeros=round(100*sapply(data, function(x) sum(x==0,na.rm=T))/nrow(data),2),
-		q_na=sapply(data, function(x) sum(is.na(x))),
-		p_na=round(100*sapply(data, function(x) sum(is.na(x)))/nrow(data),2),
-		q_inf=sapply(data, function(x) sum(is.infinite(x))),
-		p_inf=round(100*sapply(data, function(x) sum(is.infinite(x)))/nrow(data),2),
-		type=sapply(data, get_type_v),
-		unique=sapply(data, function(x) sum(!is.na(unique(x))))
-	)
-
-	## Create new variable for column name
-	df_status_res$variable=rownames(df_status_res)
-	rownames(df_status_res)=NULL
-
-	## Reordering columns
-	df_status_res=df_status_res[, c(9,1,2,3,4,5,6,7,8)]
-
-	## Print or return results
-	if(print_results) print(df_status_res) else return(df_status_res)
-}
-
-is.POSIXct <- function(x) inherits(x, "POSIXct")
-is.POSIXlt <- function(x) inherits(x, "POSIXlt")
-is.POSIXt <- function(x) inherits(x, "POSIXt")
-
-get_type_v <- function(x)
-{
-	## handler for posix object, because class function returns a list in this case
-	posix=ifelse(is.POSIXct(x), "POSIXct", "")
-	posix=ifelse(is.POSIXlt(x), paste(posix, "POSIXlt", sep="/"), posix)
-	posix=ifelse(is.POSIXt(x), paste(posix, "POSIXt", sep="/"), posix)
-
-	# ifnot posix..then something else
-	if(posix=="")
-	{
-		cl=class(x)
-		return(ifelse(length(cl)>1, paste(cl, collapse = "-"), cl))
-	} else {
-		return(posix)
-	}
-}
-
-
-
 #' @title Get model perfomance metrics (KS, AUC and ROC)
-#' @description Get model performance for tree models (rpart library), or glm. It returns quality metrics: AUC (Area Under ROC Curve) and KS (Kolmogorov-Smirnov), and plots the ROC curve.
+#' @description NOTE: This function will be deprecated! Get model performance for tree models (rpart library), or glm. It returns quality metrics: AUC (Area Under ROC Curve) and KS (Kolmogorov-Smirnov), and plots the ROC curve.
 #' @param fit model, it could be any of the following: decision tree from rpart package, glm model or randomForest.
 #' @param data data frame used to build the model. Also it supports data for testing, (it has to contain same columns as training data.
 #' @param target_var It's the name of the column used as target/outcome. It's an string value, write it between apostrohpe.
@@ -143,7 +76,10 @@ get_sample <- function(data, percentage_tr_rows=0.8, seed=987)
 
 
 #' @title Generates lift and cumulative gain performance table and plot
-#' @description It retrieves the cumulative positive rate -gain curve- and the lift chart & plot when score is divided in 5, 10 or 20 segments. Both metrics give a quality measure about how well the model predicts. Higher values at the beginning of the population implies a better model.
+#' @description It retrieves the cumulative positive rate -gain curve- and the lift chart & plot when score is divided
+#' in 5, 10 or 20 segments. Both metrics give a quality measure about how well the model predicts.
+#' Higher values at the beginning of the population implies a better model. More info at:
+#'  \url{https://livebook.datascienceheroes.com/model-performance.html#scoring_data}
 #' @param data input data source
 #' @param str_score the variable which contains the score number, or likelihood of being positive class
 #' @param str_target target binary variable indicating class label
@@ -153,30 +89,23 @@ get_sample <- function(data, percentage_tr_rows=0.8, seed=987)
 #' heart_disease$score=predict(fit_glm, newdata=heart_disease, type='response')
 #' gain_lift(data=heart_disease,str_score='score',str_target='has_heart_disease')
 #'
-#' @return lift/gain table, column: gain implies how much positive cases are catched if the cut point to define the positive class is set to the column "Score Point"
+#' @return lift/gain table, column: gain implies how much positive cases are catched if the cut point to define the
+#' positive class is set to the column "Score Point"
 #' @export
-gain_lift <- function(data, str_score, str_target, q_segments)
+gain_lift <- function(data, str_score, str_target, q_segments=10)
 {
 	options(scipen = 999)
 	data=data.frame(data)
 	# The negative score produces that the highest score are at the top
 	# data=heart_disease; str_score='score'; str_target='has_heart_disease'; q_segments='5'
-	data$neg_score=-data[, str_score]
+	data$neg_score=-data[[str_score]]
 
 	# Valid values for q_segments
-	if(missing(q_segments))
-		q_segments=10
+	if(q_segments<1 | missing(q_segments)){
+		q_segments = 10
+	}
 
-	if(q_segments==20)
-		seq_v=seq(from=0.05, to=0.95, by=0.05)
-
-	if(q_segments==10 | !(q_segments %in% c(5,10,20)))
-		seq_v=seq(from=0.1, to=0.9, by=0.1)
-
-	if(q_segments==5)
-		seq_v=seq(from=0.2, to=0.8, by=0.2)
-
-	seq_v=c(seq_v, 1)
+	seq_v=c(seq(from=1/q_segments, to=1-1/q_segments, by=1/q_segments), 1) # Add all cutpoints from 1/q_segments to 1, by 1/q_segments increments.
 
 	quantile_cuts=quantile(data$neg_score, probs=seq_v)
 
