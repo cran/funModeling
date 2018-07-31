@@ -9,7 +9,7 @@ plot_num(heart_disease)
 ## ------------------------------------------------------------------------
 profiling_num(heart_disease)
 
-## ----distribution_categorical_variable, message=FALSE, fig.height=3, fig.width=5, warning=FALSE----
+## ----distribution1, message=FALSE, fig.height=3, fig.width=5, warning=FALSE----
 library(dplyr)
 
 # Select only two variables for this example
@@ -24,7 +24,7 @@ correlation_table(heart_disease, "has_heart_disease")
 ## ------------------------------------------------------------------------
 var_rank_info(heart_disease, "has_heart_disease")
 
-## ----profiling_variable_predictive_modeling, fig.height=4, fig.width=8----
+## ----profiling1, fig.height=4, fig.width=8-------------------------------
 cross_plot(data=heart_disease, input=c("age", "oldpeak"), target="has_heart_disease")
 
 ## ----boxplot_analysis, fig.height=2, fig.width=4-------------------------
@@ -78,10 +78,6 @@ data_prep=prep_outliers(data = heart_disease, input = c('max_heart_rate','restin
 
 
 ## ---- echo=FALSE---------------------------------------------------------
-# Get threshold according to Hampel's method
-hampel_outlier(heart_disease$max_heart_rate)
-
-## ---- echo=FALSE---------------------------------------------------------
 # Checking max and min value for 'max_heart_rate' before the transformation
 sprintf("Before transformation -> Min: %s; Max: %s", min(heart_disease$max_heart_rate), max(heart_disease$max_heart_rate))
 
@@ -93,7 +89,7 @@ data_prep=prep_outliers(data = heart_disease, input = c('max_heart_rate','restin
 sprintf("After transformation -> Min: %s; Max: %s", min(data_prep$max_heart_rate), max(data_prep$max_heart_rate))
 
 
-## ----predictive_model_performance, fig.height=3, fig.width=7-------------
+## ----performance, fig.height=3, fig.width=7------------------------------
 # Create machine learning model and get its scores for positive case 
 fit_glm=glm(has_heart_disease ~ age + oldpeak, data=heart_disease, family = binomial)
 heart_disease$score=predict(fit_glm, newdata=heart_disease, type='response')

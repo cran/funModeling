@@ -4,7 +4,7 @@
 \alias{gain_lift}
 \title{Generates lift and cumulative gain performance table and plot}
 \usage{
-gain_lift(data, score, target, str_score, str_target, q_segments = 10)
+gain_lift(data, score, target, q_segments = 10)
 }
 \arguments{
 \item{data}{input data source}
@@ -13,11 +13,7 @@ gain_lift(data, score, target, str_score, str_target, q_segments = 10)
 
 \item{target}{target binary variable indicating class label}
 
-\item{str_score}{THIS PARAMETER WILL BE DEPRECATED. Please use 'score' insted. Only name changes, not functionality.}
-
-\item{str_target}{THIS PARAMETER WILL BE DEPRECATED. Please use 'target' insted. Only name changes, not functionality.}
-
-\item{q_segments}{quantity of segments to split str_score, valid values: 5, 10 or 20}
+\item{q_segments}{quantity of segments to split score variable, valid values: 5, 10 or 20}
 }
 \value{
 lift/gain table, column: gain implies how much positive cases are catched if the cut point to define the

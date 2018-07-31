@@ -4,7 +4,7 @@
 \alias{plotar}
 \title{Correlation plots}
 \usage{
-plotar(data, input, target, str_input, str_target, plot_type, path_out)
+plotar(data, input, target, plot_type, path_out)
 }
 \arguments{
 \item{data}{data frame source}
@@ -12,10 +12,6 @@ plotar(data, input, target, str_input, str_target, plot_type, path_out)
 \item{input}{string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
 
 \item{target}{string of the variable to predict, it supports binary or multinominal values.}
-
-\item{str_input}{THIS PARAMETER WILL BE DEPRECATED. Please use 'input' insted. Only name changes, not functionality.string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
-
-\item{str_target}{THIS PARAMETER WILL BE DEPRECATED. Please use 'target' insted. Only name changes, not functionality.}
 
 \item{plot_type}{Indicates the type of plot to retrieve, available values: "boxplot" or "histdens".}
 

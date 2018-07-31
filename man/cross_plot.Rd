@@ -4,8 +4,7 @@
 \alias{cross_plot}
 \title{Cross-plotting input variable vs. target variable}
 \usage{
-cross_plot(data, input, target, str_input, str_target, path_out, auto_binning,
-  plot_type = "both")
+cross_plot(data, input, target, path_out, auto_binning, plot_type = "both")
 }
 \arguments{
 \item{data}{data frame source}
@@ -13,10 +12,6 @@ cross_plot(data, input, target, str_input, str_target, path_out, auto_binning,
 \item{input}{input variable name (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
 
 \item{target}{variable name to predict}
-
-\item{str_input}{THIS PARAMETER WILL BE DEPRECATED. Please use 'input' insted. Only name changes, not functionality.string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
-
-\item{str_target}{THIS PARAMETER WILL BE DEPRECATED. Please use 'target' insted. Only name changes, not functionality.}
 
 \item{path_out}{path directory, if it has a value the plot is saved}
 

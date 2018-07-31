@@ -23,3 +23,7 @@ Useful links:
 }
 
 }
+\author{
+\strong{Maintainer}: Pablo Casas \email{pcasas.biz@gmail.com}
+
+}

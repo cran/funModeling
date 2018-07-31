@@ -4,14 +4,12 @@
 \alias{correlation_table}
 \title{Get correlation against target variable}
 \usage{
-correlation_table(data, target, str_target)
+correlation_table(data, target)
 }
 \arguments{
 \item{data}{data frame}
 
 \item{target}{string variable to predict}
-
-\item{str_target}{THIS PARAMETER WILL BE DEPRECATED. Please use 'target' insted. Only name changes, not functionality.}
 }
 \value{
 Correlation index for all data input variable

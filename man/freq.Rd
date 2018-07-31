@@ -4,15 +4,12 @@
 \alias{freq}
 \title{Frequency table for categorical variables}
 \usage{
-freq(data, input = NA, str_input = NA, plot = TRUE, na.rm = FALSE,
-  path_out)
+freq(data, input = NA, plot = TRUE, na.rm = FALSE, path_out)
 }
 \arguments{
 \item{data}{input data containing the variable to describe}
 
 \item{input}{string input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
-
-\item{str_input}{THIS PARAMETER WILL BE DEPRECATED. Please use 'input' insted. Only name changes, not functionality. String input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
 
 \item{plot}{flag indicating if the plot is desired, TRUE by default}
 

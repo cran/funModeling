@@ -4,15 +4,13 @@
 \alias{prep_outliers}
 \title{Outliers Data Preparation}
 \usage{
-prep_outliers(data, input = NA, str_input = NA, type = NA, method = NA,
+prep_outliers(data, input = NA, type = NA, method = NA,
   bottom_percent = NA, top_percent = NA)
 }
 \arguments{
 \item{data}{a data frame or a single vector. If it's a data frame, the function returns a data frame, otherwise it returns a vector.}
 
 \item{input}{string input variable (if empty, it runs for all numeric variable).}
-
-\item{str_input}{THIS PARAMETER WILL BE DEPRECATED. Please use 'input' insted. Only name changes, not functionality. String input variable (if empty, it runs for all numeric variable), it can take a single character value or a character vector.}
 
 \item{type}{can be 'stop' or 'set_na', in the first case all falling out of the threshold will be converted to the threshold, on the other case all of these values will be set as NA.}
 
