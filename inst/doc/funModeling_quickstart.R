@@ -58,6 +58,16 @@ new_age=equal_freq(heart_disease$age, n_bins = 5)
 Hmisc::describe(new_age)
 
 ## ------------------------------------------------------------------------
+
+input=heart_disease$oldpeak
+target=heart_disease$has_heart_disease
+
+input2=discretize_rgr(input, target)
+
+# checking:
+summary(input2)
+
+## ------------------------------------------------------------------------
 age_scaled=range01(heart_disease$oldpeak)
 
 # checking results
