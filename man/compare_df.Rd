@@ -4,7 +4,8 @@
 \alias{compare_df}
 \title{Compare two data frames by keys}
 \usage{
-compare_df(dfcomp_x, dfcomp_y, keys_x, keys_y = NA, compare_values = FALSE)
+compare_df(dfcomp_x, dfcomp_y, keys_x, keys_y = NA,
+  compare_values = FALSE)
 }
 \arguments{
 \item{dfcomp_x}{first data frame to compare}

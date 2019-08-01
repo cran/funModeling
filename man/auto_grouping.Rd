@@ -4,7 +4,8 @@
 \alias{auto_grouping}
 \title{Reduce cardinality in categorical variable by automatic grouping}
 \usage{
-auto_grouping(data, input, target, n_groups, model = "kmeans", seed = 999)
+auto_grouping(data, input, target, n_groups, model = "kmeans",
+  seed = 999)
 }
 \arguments{
 \item{data}{data frame source}

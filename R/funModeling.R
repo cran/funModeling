@@ -19,9 +19,9 @@
 #' @import dplyr
 #' @importFrom reshape2 dcast melt
 #' @importFrom utils packageVersion
-#' @importFrom scales percent
+#' @importFrom scales percent comma
 #' @importFrom lazyeval interp
-#' @importFrom gridExtra grid.arrange
+#' @importFrom gridExtra grid.arrange arrangeGrob
 #' @importFrom ROCR prediction performance plot
 #' @importFrom stats cor quantile
 #' @importFrom RColorBrewer brewer.pal
@@ -30,6 +30,7 @@
 #' @importFrom utils head tail
 #' @importFrom moments skewness kurtosis
 #' @importFrom entropy entropy
+#' @importFrom pROC roc ci
 "_PACKAGE"
 
 utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","variable","geom_bar","geom_text","position",
@@ -38,4 +39,7 @@ utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","vari
 															 "scale_colour_continuous",'Var1','label','coord_flip','ylab','xlab','geom_label','unit','Population','Gain',
 															 'Score.Point','geom_line','geom_point','xlim','geom_segment','Lift', 'Freq', 'sum_pos', 'likelih','.','one_of',
 															 'grp_mean', 'mean_target',"'colorRampPalette","head","tail","rbeta","p_10","p_90","sd" ,"std_dev","variation_coef",
-															 "iqr", "type","gr","discretize_bins", "cuts"), package = "funModeling", add = F)
+															 "iqr", "type","gr","discretize_bins", "cuts","..y..", "colour", "complete.cases", "deciles",
+															 "fpr", "gg_pos", "ggplotly", "lm", "max_score", "min_score", "model_metrics", "p_error", "png",
+															 "quantile_tag", "real_error", "reorder", "test_auc", "test_ll", "tpr", "train_auc", "train_ll",
+															 "trees", "try_require", "values"), package = "funModeling", add = F)
