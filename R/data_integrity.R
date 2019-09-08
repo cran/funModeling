@@ -10,10 +10,10 @@
 status <- function (data)
 {
   if (mode(data) %in% c("logical", "numeric", "complex", "character")) {
-    data = tibble(var = data)
+    data = data.frame(var = data)
   }
 
-  status_res = tibble(
+  status_res = data.frame(
     q_zeros = sapply(data, function(x) sum(x == 0, na.rm = T)),
     p_zeros = sapply(data, function(x) sum(x == 0, na.rm = T))/nrow(data),
     q_na = sapply(data, function(x) sum(is.na(x))),
@@ -30,13 +30,16 @@ status <- function (data)
   status_res$variable = colnames(data)
   status_res = status_res %>% dplyr::select(variable, everything())
 
-  status_res
+  return(status_res)
 }
+
+
+
 
 #' @title Data integrity
 #' @description A handy function to return different vectors of variable names aimed to quickly filter NA, categorical (factor / character), numerical and other types (boolean, date, posix).
 #' It also returns a vector of variables which have high cardinality.
-#' It returns an 'integrity' object, which has: 'status_now' (comes from status function), and 'resutls' list, following elements can be found:
+#' It returns an 'integrity' object, which has: 'status_now' (comes from status function), and 'results' list, following elements can be found:
 #'
 #' vars_cat: Vector containing the categorical variables names (factor or character)
 #'
@@ -53,6 +56,8 @@ status <- function (data)
 #' vars_cat_with_NA: Summary table for categorical variables with NA
 #'
 #' vars_cat_high_card: Summary table for  high cardinality variables (where thershold = MAX_UNIQUE parameter)
+#'
+#' vars_one_value: Vector containing the variables names with 1 unique different value
 #'
 #' Explore the NA and high cardinality variables by doing summary(integrity_object), or a full summary by doing print(integrity_object)
 #'
@@ -104,12 +109,17 @@ data_integrity <- function(data, MAX_UNIQUE=35)
   	dplyr::select(variable, unique) %>%
     arrange(-unique)
 
+  vars_one_value=stat %>%
+  	dplyr::filter(unique==1) %>% pull(variable)
+
+
   # chequear target, cant valores unicos y tipo
   integrity_results=list(
   				 vars_num_with_NA=vars_num_with_NA,
            vars_cat_with_NA=vars_cat_with_NA,
            vars_cat_high_card=vars_cat_high_card,
            MAX_UNIQUE=MAX_UNIQUE,
+  				 vars_one_value=vars_one_value,
            vars_cat=vars_cat,
            vars_num=vars_num,
            vars_char=vars_char,
@@ -138,7 +148,7 @@ summary.integrity <- function(object, ...) {
 	{
 		vars_num_na=paste(res$vars_num_with_NA$variable, collapse = ", ")
 
-		err_msg_vars_num=str_c("*", sprintf("{Numerical with NA} %s",  vars_num_na), sep=" ")
+		err_msg_vars_num=str_c(cli::symbol$circle_dotted, sprintf("{Numerical with NA} %s",  vars_num_na), sep=" ")
 
 		l_msgs=c(l_msgs, msg=err_msg_vars_num)
 	}
@@ -146,16 +156,24 @@ summary.integrity <- function(object, ...) {
 	if(nrow(res$vars_cat_with_NA)>0)
 	{
 		vars_cat_na=paste(res$vars_cat_with_NA$variable, collapse = ", ")
-		err_msg_vars_cat=str_c("*", sprintf("{Categorical with NA} %s",  vars_cat_na), sep=" ")
+		err_msg_vars_cat=str_c(cli::symbol$circle_dotted, sprintf("{Categorical with NA} %s",  vars_cat_na), sep=" ")
 
 		l_msgs=c(l_msgs, msg=err_msg_vars_cat)
+	}
+
+	if(length(res$vars_one_value)>0)
+	{
+		vars_one_value=paste(res$vars_one_value, collapse = ", ")
+		err_msg_one_value=str_c(cli::symbol$bullet, sprintf("{One unique value} %s",  vars_one_value), sep=" ")
+
+		l_msgs=c(l_msgs, msg=err_msg_one_value)
 	}
 
 	if(nrow(res$vars_cat_high_card)>0)
 	{
 		vars_high_card=paste(res$vars_cat_high_card$variable, collapse = ", ")
 
-		err_msg_high_card=str_c("*", sprintf("{High cardinality (MAX_UNIQUE > %s)} %s", res$MAX_UNIQUE, vars_high_card), sep=" ")
+		err_msg_high_card=str_c(cli::symbol$circle_circle, sprintf("{High cardinality (MAX_UNIQUE > %s)} %s", res$MAX_UNIQUE, vars_high_card), sep=" ")
 
 		l_msgs=c(l_msgs, msg=err_msg_high_card)
 	}
@@ -169,7 +187,7 @@ summary.integrity <- function(object, ...) {
 		}
 
 	} else {
-		final_msg=str_c(str_c("*" , "No NA / No high cardinality!", sep=" "), sep = "\n")
+		final_msg=str_c(str_c(cli::symbol$tick , "No num/cat with NA. No high card. No one-value var.", sep=" "), sep = "\n")
 	}
 
 	cat(final_msg)

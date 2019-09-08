@@ -17,7 +17,7 @@ An 'integrity' object.
 \description{
 A handy function to return different vectors of variable names aimed to quickly filter NA, categorical (factor / character), numerical and other types (boolean, date, posix).
 It also returns a vector of variables which have high cardinality.
-It returns an 'integrity' object, which has: 'status_now' (comes from status function), and 'resutls' list, following elements can be found:
+It returns an 'integrity' object, which has: 'status_now' (comes from status function), and 'results' list, following elements can be found:
 
 vars_cat: Vector containing the categorical variables names (factor or character)
 
@@ -34,6 +34,8 @@ vars_num_with_NA: Summary table for numerical variables with NA
 vars_cat_with_NA: Summary table for categorical variables with NA
 
 vars_cat_high_card: Summary table for  high cardinality variables (where thershold = MAX_UNIQUE parameter)
+
+vars_one_value: Vector containing the variables names with 1 unique different value
 
 Explore the NA and high cardinality variables by doing summary(integrity_object), or a full summary by doing print(integrity_object)
 }

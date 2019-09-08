@@ -17,6 +17,7 @@
 #' @importFrom  Hmisc cut2
 #' @import ggplot2
 #' @import dplyr
+#' @importFrom cli symbol
 #' @importFrom reshape2 dcast melt
 #' @importFrom utils packageVersion
 #' @importFrom scales percent
@@ -30,6 +31,8 @@
 #' @importFrom utils head tail
 #' @importFrom moments skewness kurtosis
 #' @importFrom entropy entropy
+#' @importFrom stringr str_c
+
 "_PACKAGE"
 
 utils::globalVariables(names=c("fum","element_blank","value","ratio","aes","variable","geom_bar","geom_text","position",

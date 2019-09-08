@@ -3,6 +3,22 @@ library(funModeling)
 
 df_status(heart_disease)
 
+## ---- message=FALSE, warning=FALSE---------------------------------------
+library(funModeling)
+
+status(heart_disease)
+
+## ---- message=FALSE, warning=FALSE---------------------------------------
+library(funModeling)
+
+di=data_integrity(heart_disease)
+
+# returns a summary
+summary(di)
+
+# print all the metadata information
+print(di)
+
 ## ---- fig.height=3, fig.width=5------------------------------------------
 plot_num(heart_disease)
 
