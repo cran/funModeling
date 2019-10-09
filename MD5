@@ -1,14 +1,14 @@
-810a16dab2ebd687d7123e99d17bb25c *DESCRIPTION
-59f666b2ed1df6b2d7fb48027e8fbd08 *NAMESPACE
+3105b0edd68b15fc48aca67624ba5fb5 *DESCRIPTION
+9025310bd22254d5b5667524fe7faa3d *NAMESPACE
 fa5ee90a3744af4df44ddfa5e24c8585 *R/attach.R
 294e58fbd2121fbb766ae0e9aa3a860c *R/common_lib.R
 9a819f3d47d3ebdb2d30188c66a22e17 *R/cross_plot.R
 c73ad21dc525c0bf525e39a531501c27 *R/data.R
-1503ec761a840783412c24efd81a725f *R/data_integrity.R
+d936b642bb4bc582aded4872859b0115 *R/data_integrity.R
 c942a1ef722e21ac11cae773813b2be6 *R/data_preparation.R
 43d013d0ba2b142b5f760890b8ef54fe *R/discretize.R
 d500be32c2f1c38a6629536a17ba6300 *R/exploratory_data_analysis.R
-eedf584b016cbefcb9400d1a9d514667 *R/funModeling.R
+73e4aa08df8b4715cb60bebb0ad322ba *R/funModeling.R
 a0364ea39f31cf67526c45351cb452a5 *R/information_theory.R
 f822d57f4b9ad2b61c04c8311ee165f0 *R/models_lib.R
 1650b95733204edeaf4e70aa49d7dc0b *R/outliers.R
@@ -32,6 +32,7 @@ af77788901006d5365b40ed4082b7338 *man/concatenate_n_vars.Rd
 7d82695c3b83e4e087de244e24b95d18 *man/data_country.Rd
 55a8cc033df341c9192ef0a10a4c4a73 *man/data_golf.Rd
 96135948bb10c51f6ab8189a508b741e *man/data_integrity.Rd
+21ca1ab52619f8bba57693f141f0f87b *man/data_integrity_model.Rd
 4f64d32ec43f0e8bcacf01c4b95fe989 *man/desc_groups.Rd
 3a5dbeefd3fa950e52adf569cb2c3d0e *man/desc_groups_rank.Rd
 1026c651a67a7403c12609c2fae551b5 *man/df_status.Rd
