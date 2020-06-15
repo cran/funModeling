@@ -12,6 +12,8 @@ vignette: >
 
 # funModeling quick-start {#quick_start}
 
+![funModeling](https://s3.amazonaws.com/datascienceheroes.com/img/funmodeling_logo_wh.png)
+
 This package contains a set of functions related to exploratory data analysis, data preparation, and model performance. It is used by people coming from business, research, and teaching (professors and students).
 
 `funModeling` is intimately related to the _Data Science Live Book_ -Open Source- (2017) in the sense that most of its functionality is used to explain different topics addressed by the book.
@@ -25,12 +27,6 @@ Some functions have in-line comments so the user can open the black-box and lear
 All the functions are well documented, explaining all the parameters with the help of many short examples. R documentation can be accessed by: `help("name_of_the_function")`.
 
 
-**Important changes from latest version 1.6.7**, (relevant only if you were using previous versions):
-
-From the latest version, 1.6.7 (Jan 21-2018), the parameters `str_input`, `str_target` and `str_score` will be renamed to `input`, `target` and `score` respectively. The functionality remains the same. If you were using these parameters names on production, they will be still working until next release. this means that for now, you can use for example `str_input` or `input`.
-
-The other importat change was in `discretize_get_bins`, which is detailed later in this document.
-
 <br>
 
 ### About this quick-start
@@ -41,21 +37,6 @@ Below there are most of the `funModeling` functions divided by category.
 
 ## Exploratory data analysis
 
-### `df_status`: Dataset health status
-
-Use case: analyze the zeros, missing values (`NA`), infinity, data type, and number of unique values for a given dataset.
-
-```{r, message=FALSE, warning=FALSE}
-library(funModeling)
-
-df_status(heart_disease)
-```
-
-Note: `df_status` will be deprecated, please use `status` instead.
-
-[**Read more here.**](https://livebook.datascienceheroes.com/exploratory-data-analysis.html#dataset-health-status)
-
-<br>
 
 ### `status`: Dataset health status (2nd version)
 
@@ -66,6 +47,9 @@ library(funModeling)
 
 status(heart_disease)
 ```
+
+Note: `df_status` will be deprecated, please use `status` instead.
+
 
 ### `data_integrity`: Dataset health status (2nd version)
 
@@ -181,7 +165,6 @@ Note: It analyzes numerical and categorical variables. It is also used with the 
 [**Read more here.**](https://livebook.datascienceheroes.com/selecting-best-variables.html#select_features_var_rank_info)
 
 
-
 <br>
 
 ### `cross_plot`: Distribution plot between input and target variable
@@ -290,18 +273,6 @@ Notes:
 
 <br>
 
-### `convert_df_to_categoric`: Convert every column in a data frame to character variables
-
-Binning, or discretization criterion for any numerical variable is equal frequency. Factor variables are directly converted to character variables.
-
-```{r}
-iris_char=convert_df_to_categoric(data = iris, n_bins = 5)
-
-# checking first rows
-head(iris_char)
-```
-
-
 ### `equal_freq`: Convert numeric variable to categoric
 
 Converts numeric vector into a factor using the equal frequency criterion.
@@ -322,6 +293,8 @@ Notes:
 <br>
 
 ### `discretize_rgr`: Variable discretization based on gain ratio maximization
+
+This is a new method developed in `funModeling` developed improve the binning based on a binary target variable.
 
 ```{r}
 
@@ -446,6 +419,6 @@ gain_lift(data=heart_disease, score='score', target='has_heart_disease')
 ---
 
 * Github repository (report bugs or improvements): https://github.com/pablo14/funModeling
-* Creator and maintainer: Pablo Casas https://twitter.com/pabloc_ds | pcasas.biz [at] gmail.com
+* Creator and maintainer: Pablo Casas https://twitter.com/pabloc_ds
 
 

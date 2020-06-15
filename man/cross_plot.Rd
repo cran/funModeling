@@ -4,8 +4,7 @@
 \alias{cross_plot}
 \title{Cross-plotting input variable vs. target variable}
 \usage{
-cross_plot(data, input, target, path_out, auto_binning,
-  plot_type = "both")
+cross_plot(data, input, target, path_out, auto_binning, plot_type = "both")
 }
 \arguments{
 \item{data}{data frame source}

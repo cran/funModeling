@@ -13,7 +13,7 @@ data_integrity_model(data, model_name, MAX_UNIQUE = 35)
 
 \item{MAX_UNIQUE}{max unique threshold to flag a categorical variable as a high cardinality one. Normally above 35 values it is needed to reduce the number of different values.
 # Example 1:
-data_integrity(heart_disease)
+data_integrity_model(data=heart_disease, model_name="pca")
 # Example 2:
 # changing the default minimum threshold to flag a variable as high cardiniality
 data_integrity_model(data=iris, model_name="xgboost", MAX_UNIQUE=50)}

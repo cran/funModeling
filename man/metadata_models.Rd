@@ -4,7 +4,9 @@
 \name{metadata_models}
 \alias{metadata_models}
 \title{Metadata models data integrity}
-\format{Tibble}
+\format{
+Tibble
+}
 \usage{
 metadata_models
 }

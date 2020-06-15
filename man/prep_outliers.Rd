@@ -4,8 +4,15 @@
 \alias{prep_outliers}
 \title{Outliers Data Preparation}
 \usage{
-prep_outliers(data, input = NA, type = NA, method = NA,
-  bottom_percent = NA, top_percent = NA, k_mad_value = NA)
+prep_outliers(
+  data,
+  input = NA,
+  type = NA,
+  method = NA,
+  bottom_percent = NA,
+  top_percent = NA,
+  k_mad_value = NA
+)
 }
 \arguments{
 \item{data}{a data frame or a single vector. If it's a data frame, the function returns a data frame, otherwise it returns a vector.}
