@@ -19,7 +19,7 @@ It retrieves the same as \code{\link{var_rank_info}} but receiving two vectors.
 Metrics are: entropy (en), mutual information (mi), information gain (ig) and gain ratio (gr).
 }
 \examples{
-\dontrun{
+\donttest{
 infor_magic(data_golf$outlook, data_golf$play_golf)
 }
 }

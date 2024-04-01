@@ -6,10 +6,10 @@
 #' @param path_out path directory to export the output, if it has a value the plot is saved,
 #' if the directory doesn't existis it will try to create it. To save in current directory path must be dot: "."
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' plot_num(mtcars)
 #' # changing the bins parameter and exporting the plot
-#' plot_num(data=mtcars, bins=5, path_out="my_folder")
+#' # plot_num(data=mtcars, bins=5, path_out="my_folder")
 #' }
 #' @return plot containing all numerical variables
 #' @export
@@ -19,7 +19,7 @@ plot_num <- function(data, bins=10, path_out=NA)
 	# The official documentation is quite clear about it: http://seananderson.ca/2013/10/19/reshape.html
 	wide_data=suppressMessages(melt(data))
 	p=ggplot(data = wide_data, mapping = aes(x = value)) +
-		geom_histogram(bins = bins, na.rm=T) + facet_wrap(~variable, scales = 'free_x') +  aes(fill = variable) + guides(fill=FALSE)
+		geom_histogram(bins = bins, na.rm=T) + facet_wrap(~variable, scales = 'free_x') +  aes(fill = variable) + guides(fill="none")
 
 
 	## Save plot
@@ -373,7 +373,7 @@ freq_logic <- function(data, input, plot, na.rm, path_out)
 			## Save plot
 			if(!is.na(path_out))
 			{
-				dir.create(path_out, showWarnings = F)
+				dir.create(path_out, showWarnings = FALSE)
 
 				if(dir.exists(path_out))
 				{

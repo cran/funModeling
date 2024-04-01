@@ -19,7 +19,7 @@ Retrieves the bottom and top boundaries to flag outliers or extreme values, acco
 This function is used in 'prep_outliers' function. All `NA`s values are automatically excluded. More information at: \url{https://livebook.datascienceheroes.com/data-preparation.html#how_to_deal_with_outliers_in_r}.
 }
 \examples{
-\dontrun{
+\donttest{
 hampel_outlier(heart_disease$age)
 }
 }

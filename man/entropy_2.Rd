@@ -20,7 +20,7 @@ This log2 is mentioned in most of the Claude Shannon bibliography.
 Input/target can be numeric or character.
 }
 \examples{
-\dontrun{
+\donttest{
 # Measuring entropy between input and target variable
 entropy_2(input=data_golf$outlook, target=data_golf$play_golf)
 }

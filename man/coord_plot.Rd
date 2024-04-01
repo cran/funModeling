@@ -22,7 +22,7 @@ coordinate plot, if print_table=T it also prints a table with the average per co
 Calculate the means (or other function defined in 'group_func' parameter) per group to analyze how each segment behave. It scales each variable mean inti the 0 to 1 range to easily profile the groups according to its mean. It also calculate the mean regardless the grouping. This function is also useful when you want to profile cluster results in terms of its means.
 }
 \examples{
-\dontrun{
+\donttest{
 # calculating the differences based on function 'mean'
 coord_plot(data=mtcars, group_var="cyl")
 # printing the table used to generate the coord_plot

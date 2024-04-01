@@ -1,8 +1,6 @@
 #' @title Reduce cardinality in categorical variable by automatic grouping
 #' @description Reduce the cardinality of an input variable based on a target -binary by now- variable based on attribitues of accuracy and representativity,
 #'  for both input and target variable. It uses a cluster model to create the new groups.
-#'   Full documentation can be found at:
-#'   \url{https://livebook.datascienceheroes.com/data-preparation.html#high_cardinality_predictive_modeling}
 #' @param data data frame source
 #' @param input categorical variable indicating
 #' @param target string of the variable to optimize the re-grouping
@@ -10,7 +8,7 @@
 #' @param model is the clustering model used to create the grouping, supported models: "kmeans" (default) or "hclust" (hierarchical clustering).
 #' @param seed optional, random number used internally for the k-means, changing this value will change the model
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Reducing quantity of countries based on has_flu variable
 #' auto_grouping(data=data_country, input='country', target="has_flu", n_groups=8)
 #' }

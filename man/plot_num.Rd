@@ -21,9 +21,9 @@ plot containing all numerical variables
 Retrieves one plot containing all the histograms for numerical variables. NA values will not be displayed.
 }
 \examples{
-\dontrun{
+\donttest{
 plot_num(mtcars)
 # changing the bins parameter and exporting the plot
-plot_num(data=mtcars, bins=5, path_out="my_folder")
+# plot_num(data=mtcars, bins=5, path_out="my_folder")
 }
 }

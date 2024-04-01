@@ -12,19 +12,24 @@
 #' @param stringsAsFactors Boolean variable which indicates if the discretization result is character or factor.
 #' When TRUE, the segments are ordered. TRUE by default.
 #' @examples
-#' \dontrun{
-#' # Getting the bins thresholds for each. If input is missing, will run for all numerical variables.
+#' \donttest{
+#' # Getting the bins thresholds for each. If input is missing, 
+#' # will run for all numerical variables.
 #' d_bins=discretize_get_bins(data=heart_disease,
 #' input=c("resting_blood_pressure", "oldpeak"), n_bins=5)
 #'
-#' # Now it can be applied on the same data frame, or in a new one (for example in a predictive model
-#'  that change data over time)
-#' heart_disease_discretized=discretize_df(data=heart_disease, data_bins=d_bins, stringsAsFactors=T)
+#' # Now it can be applied on the same data frame,
+#' # or in a new one (for example in a predictive model that 
+#' # change data over time)
+#' heart_disease_discretized=
+#' discretize_df(data=heart_disease, 
+#' data_bins=d_bins, 
+#' stringsAsFactors=TRUE)
 #'
 #'}
 #' @return Data frame with the transformed variables
 #' @export
-discretize_df <- function(data, data_bins, stringsAsFactors=T)
+discretize_df <- function(data, data_bins, stringsAsFactors=TRUE)
 {
 	# Recover all the variables to discretize
 	vars_num=data_bins$variable
@@ -63,25 +68,11 @@ discretize_df <- function(data, data_bins, stringsAsFactors=T)
 #'  \url{https://livebook.datascienceheroes.com/data-preparation.html#treating-missing-values-in-numerical-variables}).
 #'  This function must be used with \link{discretize_df}.
 #'  If it is needed a different number of bins per variable, then the function must be called more than once.
-#' @examples
-#' \dontrun{
-#' # Getting the bins thresholds for each. If input is missing, will run for all numerical variables.
-#' d_bins=discretize_get_bins(data=heart_disease,
-#'                            input=c("resting_blood_pressure", "oldpeak"),
-#'                            n_bins=5)
-#'
-#' # Now it can be applied on the same data frame, or in a new one (for example in a predictive model
-#' # that change data over time)
-#'  heart_disease_discretized=discretize_df(data=heart_disease, data_bins=d_bins, stringsAsFactors=T)
-#'
-#' # Checking results
-#' df_status(heart_disease_discretized)
-#'}
 #' @return Data frame containing the thresholds or cuts to bin every variable
 #' @export
 discretize_get_bins <- function(data, n_bins=5, input=NULL)
 {
-	#vars_num=df_status(data, print_results = F) %>% filter(type %in% c("integer","numeric"), unique>n_bins) %>% .$variable
+	#vars_num=df_status(data, print_results = FALSE) %>% filter(type %in% c("integer","numeric"), unique>n_bins) %>% .$variable
 	stat=status(data)
 	vars_num = stat %>% filter(type %in% c("integer","numeric"), unique>n_bins) %>% pull(variable)
 
@@ -120,7 +111,7 @@ discretize_get_bins <- function(data, n_bins=5, input=NULL)
 
 get_bins_processed <- function(x, n_bins)
 {
-	cuts=cut2(x, g = n_bins, onlycuts = T)
+	cuts=cut2(x, g = n_bins, onlycuts = TRUE)
 
 	# when saving the 1st element, the min, is not necesary
 	cuts=cuts[-1]
@@ -196,7 +187,7 @@ conv_factor <- function(x)
 #' @param data input data frame to discretize
 #' @param n_bins number of bins/segments for each variable
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # before
 #' df_status(heart_disease)
 #'
@@ -210,7 +201,7 @@ convert_df_to_categoric <- function(data, n_bins)
 {
 	# Discretizing numerical variables
 	d_cuts=suppressMessages(discretize_get_bins(data = data, n_bins = n_bins))
-	data_cat=discretize_df(data = data, data_bins = d_cuts, stringsAsFactors = F)
+	data_cat=discretize_df(data = data, data_bins = d_cuts, stringsAsFactors = FALSE)
 
 	# Converting remaining variables
 	data_cat_2=data_cat %>% mutate_all(as.character)
@@ -226,7 +217,7 @@ convert_df_to_categoric <- function(data, n_bins)
 #' @param data data frame containing the two variables to concatenate
 #' @param vars character vector containing all variables to concatenate
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' new_variable=concatenate_n_vars(mtcars, c("cyl", "disp"))
 #' # Checking new variable
 #' head(new_variable)
@@ -310,7 +301,7 @@ recursive_gr_cuts_aux <- function(input, target, fpoints, max_depth, min_n)
 #' @param min_perc_bins minimum percetange of rows for each split or segment (controls the sample size), 0,1 (or 10 percent) as default
 #' @param max_n_bins maximum number of bins or segments to split the input variable, 5 bins as default
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(funModeling)
 #' data=heart_disease
 #' input=data$oldpeak

@@ -18,7 +18,7 @@ gain ratio
 Computes the information gain between an 'input' and 'target' variable (using log2). Similar to information gain but less sensitive to high cardinality variables.
 }
 \examples{
-\dontrun{
+\donttest{
 gain_ratio(input=data_golf$outlook, target=data_golf$play_golf)
 }
 }

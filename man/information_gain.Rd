@@ -18,7 +18,7 @@ information gain
 Computes the information gain between an 'input' and 'target' variable (using log2). In general terms, the higher the more predictable the input is.
 }
 \examples{
-\dontrun{
+\donttest{
 information_gain(input=data_golf$outlook, target=data_golf$play_golf)
 }
 }

@@ -21,7 +21,7 @@ gain between 'N' input variables an against a target variable. This function mak
 categorical data.
 }
 \examples{
-\dontrun{
+\donttest{
 new_variable=concatenate_n_vars(mtcars, c("cyl", "disp"))
 # Checking new variable
 head(new_variable)

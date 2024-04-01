@@ -26,18 +26,3 @@ Data frame containing the thresholds or cuts to bin every variable
 It takes a data frame and returns another data frame indicating the threshold for each bin (or segment)
 in order to discretize the variable.
 }
-\examples{
-\dontrun{
-# Getting the bins thresholds for each. If input is missing, will run for all numerical variables.
-d_bins=discretize_get_bins(data=heart_disease,
-                           input=c("resting_blood_pressure", "oldpeak"),
-                           n_bins=5)
-
-# Now it can be applied on the same data frame, or in a new one (for example in a predictive model
-# that change data over time)
- heart_disease_discretized=discretize_df(data=heart_disease, data_bins=d_bins, stringsAsFactors=T)
-
-# Checking results
-df_status(heart_disease_discretized)
-}
-}

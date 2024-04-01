@@ -26,7 +26,7 @@ cross plot
 The cross_plot shows how the input variable is correlated with the target variable, getting the likelihood rates for each input's bin/bucket .
 }
 \examples{
-\dontrun{
+\donttest{
 ## Example 1:
 cross_plot(data=heart_disease, input="chest_pain", target="has_heart_disease")
 
@@ -35,8 +35,8 @@ cross_plot(data=heart_disease, input="oldpeak",
 		target="has_heart_disease", auto_binning=FALSE)
 
 ## Example 3: Saving the plot into a folder:
-cross_plot(data=heart_disease, input="oldpeak",
-		target="has_heart_disease", path_out = "my_folder")
+#cross_plot(data=heart_disease, input="oldpeak",
+#		target="has_heart_disease", path_out = "my_folder")
 
 ## Example 4: Running with multiple input variables at the same time:
 cross_plot(data=heart_disease, input=c("age", "oldpeak", "max_heart_rate"),

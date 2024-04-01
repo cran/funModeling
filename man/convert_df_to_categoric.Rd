@@ -23,7 +23,7 @@ After this step, it may happen that variables remain non-character, so these var
 directly into character.
 }
 \examples{
-\dontrun{
+\donttest{
 # before
 df_status(heart_disease)
 

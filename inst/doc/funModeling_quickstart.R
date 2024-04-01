@@ -1,3 +1,8 @@
+## ----setup, echo = FALSE------------------------------------------------------
+knitr::opts_chunk$set(
+	out.width = "700px"
+)
+
 ## ---- message=FALSE, warning=FALSE--------------------------------------------
 library(funModeling)
 
@@ -14,13 +19,13 @@ summary(di)
 # print all the metadata information
 print(di)
 
-## ---- fig.height=3, fig.width=5-----------------------------------------------
+## ---- fig.height=4, fig.width=6-----------------------------------------------
 plot_num(heart_disease)
 
 ## -----------------------------------------------------------------------------
 profiling_num(heart_disease)
 
-## ----distribution1, message=FALSE, fig.height=3, fig.width=5, warning=FALSE----
+## ----distribution1, message=FALSE, fig.height=4, fig.width=6, warning=FALSE----
 library(dplyr)
 
 # Select only two variables for this example
@@ -38,10 +43,10 @@ var_rank_info(heart_disease, "has_heart_disease")
 ## ----profiling1, fig.height=4, fig.width=8------------------------------------
 cross_plot(data=heart_disease, input=c("age", "oldpeak"), target="has_heart_disease")
 
-## ----boxplot_analysis, fig.height=2, fig.width=4------------------------------
+## ----boxplot_analysis, fig.height=3, fig.width=5------------------------------
 plotar(data=heart_disease, input = c("age", "oldpeak"), target="has_heart_disease", plot_type="boxplot")
 
-## ----density_histogram, fig.height=2, fig.width=4-----------------------------
+## ----density_histogram, fig.height=3, fig.width=5-----------------------------
 plotar(data=mtcars, input = "gear", target="cyl", plot_type="histdens")
 
 ## -----------------------------------------------------------------------------
@@ -112,4 +117,7 @@ heart_disease$score=predict(fit_glm, newdata=heart_disease, type='response')
 # Calculate performance metrics
 gain_lift(data=heart_disease, score='score', target='has_heart_disease')
 
+
+## ----cluster_performance, fig.height=3, fig.width=6---------------------------
+coord_plot(data=mtcars, group_var="cyl", group_func=median, print_table=TRUE)
 

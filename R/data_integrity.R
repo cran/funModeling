@@ -14,8 +14,8 @@ status <- function (data)
   }
 
   status_res = data.frame(
-    q_zeros = sapply(data, function(x) sum(x == 0, na.rm = T)),
-    p_zeros = sapply(data, function(x) sum(x == 0, na.rm = T))/nrow(data),
+    q_zeros = sapply(data, function(x) sum(x == 0, na.rm = TRUE)),
+    p_zeros = sapply(data, function(x) sum(x == 0, na.rm = TRUE))/nrow(data),
     q_na = sapply(data, function(x) sum(is.na(x))),
     p_na = sapply(data, function(x) sum(is.na(x)))/nrow(data),
     q_inf = sapply(data, function(x) sum(is.infinite(x))),
@@ -279,12 +279,12 @@ data_integrity_model <- function(data, model_name, MAX_UNIQUE=35)
 			}
 
 			final_msg=str_c(final_msg, str_c(emoji_mark, l_err_msgs[[i]], sep=" "), sep = "\n")
-			data_ok=F
+			data_ok=FALSE
 		}
 
 	} else {
 		final_msg=str_c(str_c(cli::symbol$tick, "Data model integrity ok!", sep=" "), sep = "\n")
-		data_ok=T
+		data_ok=TRUE
 	}
 
 	# Creating S3 object

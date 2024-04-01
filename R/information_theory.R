@@ -5,7 +5,7 @@
 #' @param input numeric/character vector
 #' @param target numeric/character vector
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Measuring entropy between input and target variable
 #' entropy_2(input=data_golf$outlook, target=data_golf$play_golf)
 #' }
@@ -36,7 +36,7 @@ entropy_2 <- function(input, target)
 #' @param input numeric/character vector
 #' @param target numeric/character vector
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' information_gain(input=data_golf$outlook, target=data_golf$play_golf)
 #' }
 #' @return information gain
@@ -56,7 +56,7 @@ information_gain <- function(input, target)
 #' @param input numeric/character vector
 #' @param target numeric/character vector
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' gain_ratio(input=data_golf$outlook, target=data_golf$play_golf)
 #' }
 #' @return gain ratio
@@ -78,7 +78,7 @@ gain_ratio <- function(input, target)
 #' @param data input data frame, all the variables will be evaluated against the variable defined in 'target' parameter
 #' @param target string variable name containing the output variable.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' var_rank_info(data_golf, "play_golf")
 #' }
 #' @return data frame ordered by gain ratio metric
@@ -88,7 +88,7 @@ var_rank_info <- function(data, target)
 	nam=colnames(data)
 	nam=nam[nam!=target]
 
-	df_res=data.frame(var=NULL, en=NULL, mi=NULL, ig=NULL, gr=NULL, stringsAsFactors = F)
+	df_res=data.frame(var=NULL, en=NULL, mi=NULL, ig=NULL, gr=NULL, stringsAsFactors = FALSE)
 
 	for(var in nam)
 	{
@@ -110,7 +110,7 @@ var_rank_info <- function(data, target)
 #' @param input vector to be evaluated against the variable defined in 'target' parameter
 #' @param target vector containing the output variable.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' infor_magic(data_golf$outlook, data_golf$play_golf)
 #' }
 #' @return Matrix of 1 row and 4 columns, where each column represent the mentioned metrics

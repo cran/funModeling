@@ -6,7 +6,7 @@
 #' @param plot_type Indicates the type of plot to retrieve, available values: "boxplot" or "histdens".
 #' @param path_out path directory, if it has a value the plot is saved. To save in current directory path must be dot: "."
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## It runs for all numeric variables automatically
 #' plotar(data=heart_disease, target="has_heart_disease", plot_type="histdens")
 #'
@@ -179,7 +179,7 @@ categ_analysis_logic <- function(data, input, target)
 	#colnames(grp)[colnames(grp)=='perc_target']=paste("perc", target, sep="_")
 	#colnames(grp)[colnames(grp)=='mean_target']=paste("mean", target , sep="_")
 
-	grp=data.frame(grp, stringsAsFactors = F)
+	grp=data.frame(grp, stringsAsFactors = FALSE)
 
 	#print(sprintf("Variable: '%s'", input))
 

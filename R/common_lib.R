@@ -8,7 +8,7 @@
 #' fibonacci(4)
 #' @return vector
 #' @export
-fibonacci <- function(length, remove_first=F)
+fibonacci <- function(length, remove_first=FALSE)
 {
 	fibvals = numeric(length)
 	fibvals[1] = 1
@@ -78,7 +78,7 @@ give_me_num_vars <- function(data, target=NULL)
 give_me_character_vars <- function(data, target=NULL)
 {
 	##
-	status=df_status(data, print_results = F)
+	status=df_status(data, print_results = FALSE)
 
 	## Excluding not numeric variables
 	input=status[status$type %in% "factor" | status$type %in% "character", 'variable']
@@ -98,7 +98,7 @@ give_me_character_vars <- function(data, target=NULL)
 export_plot <- function(object_plot, path_out, file_name)
 {
 	## Save plot into a jpeg file
-	dir.create(path_out, showWarnings = F)
+	dir.create(path_out, showWarnings = FALSE)
 
 	if(dir.exists(path_out))
 	{

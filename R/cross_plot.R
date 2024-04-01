@@ -7,7 +7,7 @@
 #' @param auto_binning indicates the automatic binning of input variable based on equal frequency (function 'equal_freq'), default value=TRUE
 #' @param plot_type indicates if the output is the 'percentual' plot, the 'quantity' or 'both' (default).
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## Example 1:
 #' cross_plot(data=heart_disease, input="chest_pain", target="has_heart_disease")
 #'
@@ -16,8 +16,8 @@
 #' 		target="has_heart_disease", auto_binning=FALSE)
 #'
 #' ## Example 3: Saving the plot into a folder:
-#' cross_plot(data=heart_disease, input="oldpeak",
-#' 		target="has_heart_disease", path_out = "my_folder")
+#' #cross_plot(data=heart_disease, input="oldpeak",
+#' #		target="has_heart_disease", path_out = "my_folder")
 #'
 #' ## Example 4: Running with multiple input variables at the same time:
 #' cross_plot(data=heart_disease, input=c("age", "oldpeak", "max_heart_rate"),
@@ -54,7 +54,7 @@ cross_plot <- function(data, input, target, path_out, auto_binning, plot_type='b
 
 cross_plot_logic <- function(data, input, target, path_out, auto_binning, plot_type)
 {
-	# data=heart_disease; input="max_heart_rate"; target="has_heart_disease"; auto_binning=T
+	# data=heart_disease; input="max_heart_rate"; target="has_heart_disease"; auto_binning=TRUE
 	  check_target_existence(data, target=target)
 
 		data=remove_na_target(data, target=target)
@@ -185,7 +185,7 @@ cross_plot_logic <- function(data, input, target, path_out, auto_binning, plot_t
 	  if(!is.na(path_out))
 	  {
 
-	  	dir.create(path_out, showWarnings = F)
+	  	dir.create(path_out, showWarnings = FALSE)
 
 	    if(dir.exists(path_out))
 	    {

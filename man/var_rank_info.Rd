@@ -19,7 +19,7 @@ Retrieves a data frame containing several metrics related to information theory.
 Metrics are: entropy (en), mutual information (mi), information gain (ig) and gain ratio (gr).
 }
 \examples{
-\dontrun{
+\donttest{
 var_rank_info(data_golf, "play_golf")
 }
 }

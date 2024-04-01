@@ -24,7 +24,7 @@ Single or multiple plots specified by 'plot_type' parameter
 Visual correlation analysis. Plot different graphs in order to expose the inner information of any numeric variable against the target variable
 }
 \examples{
-\dontrun{
+\donttest{
 ## It runs for all numeric variables automatically
 plotar(data=heart_disease, target="has_heart_disease", plot_type="histdens")
 

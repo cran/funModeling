@@ -23,7 +23,7 @@ Discretize numeric variable by maximizing the gain ratio
 between each bucket and the target variable.
 }
 \examples{
-\dontrun{
+\donttest{
 library(funModeling)
 data=heart_disease
 input=data$oldpeak

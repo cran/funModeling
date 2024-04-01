@@ -187,7 +187,7 @@ desc_groups <- function(data, group_var, group_func=mean, add_all_data_row=T)
 #' @export
 desc_groups_rank <- function(data, group_var, group_func=mean)
 {
-	d_group=desc_groups(data, group_var, group_func, add_all_data_row = F)
+	d_group=desc_groups(data, group_var, group_func, add_all_data_row = FALSE)
 
 	# excluding grouping variable, from the grouping
 	all_col=colnames(d_group)
@@ -206,7 +206,7 @@ desc_groups_rank <- function(data, group_var, group_func=mean)
 #' @param group_func the data type of this parameter is a function, not an string, this is the function to be used in the group by, the default value is: mean
 #' @param print_table False by default, if true it retrieves the mean table used to generate the plot.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # calculating the differences based on function 'mean'
 #' coord_plot(data=mtcars, group_var="cyl")
 #' # printing the table used to generate the coord_plot

@@ -44,7 +44,7 @@ Stopping is recommended when creating a predictive model without biasing the res
 The function can take a data frame, and returns the same data plus the transformations specified in the input parameter. Or it can take a single vector (in the same 'data' parameter), and it returns a vector.
 }
 \examples{
-\dontrun{
+\donttest{
 # Creating data frame with outliers
 set.seed(10)
 df=data.frame(var1=rchisq(1000,df = 1), var2=rnorm(1000))

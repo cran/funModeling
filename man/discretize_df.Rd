@@ -4,7 +4,7 @@
 \alias{discretize_df}
 \title{Discretize a data frame}
 \usage{
-discretize_df(data, data_bins, stringsAsFactors = T)
+discretize_df(data, data_bins, stringsAsFactors = TRUE)
 }
 \arguments{
 \item{data}{Input data frame}
@@ -28,14 +28,19 @@ More info about converting numerical into categorical variables
 can be found at: \url{https://livebook.datascienceheroes.com/data-preparation.html#data_types}
 }
 \examples{
-\dontrun{
-# Getting the bins thresholds for each. If input is missing, will run for all numerical variables.
+\donttest{
+# Getting the bins thresholds for each. If input is missing, 
+# will run for all numerical variables.
 d_bins=discretize_get_bins(data=heart_disease,
 input=c("resting_blood_pressure", "oldpeak"), n_bins=5)
 
-# Now it can be applied on the same data frame, or in a new one (for example in a predictive model
- that change data over time)
-heart_disease_discretized=discretize_df(data=heart_disease, data_bins=d_bins, stringsAsFactors=T)
+# Now it can be applied on the same data frame,
+# or in a new one (for example in a predictive model that 
+# change data over time)
+heart_disease_discretized=
+discretize_df(data=heart_disease, 
+data_bins=d_bins, 
+stringsAsFactors=TRUE)
 
 }
 }

@@ -18,7 +18,7 @@
 #' @param bottom_percent value from 0 to 1, represents the lowest X percentage of values to treat. Valid only when method="bottom_top".
 #' @param k_mad_value only used when method='hampel', 3 by default, might seem quite restrictive. Set a higher number to spot less outliers.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Creating data frame with outliers
 #' set.seed(10)
 #' df=data.frame(var1=rchisq(1000,df = 1), var2=rnorm(1000))
@@ -232,7 +232,7 @@ prep_outliers <- function(data, input=NA, type=NA, method=NA, bottom_percent=NA,
 #' This function is used in 'prep_outliers' function. All `NA`s values are automatically excluded. More information at: \url{https://livebook.datascienceheroes.com/data-preparation.html#how_to_deal_with_outliers_in_r}.
 #' @param input Numeric variable vector
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' tukey_outlier(heart_disease$age)
 #' }
 #' @return A two-item vector, the first value represents the bottom threshold, while the second one is the top threshold
@@ -241,10 +241,10 @@ tukey_outlier <- function(input)
 {
 	input_cleaned=na.omit(input)
 
-	q_var=quantile(input_cleaned, na.rm=T, names = F)
+	q_var=quantile(input_cleaned, na.rm=TRUE, names = FALSE)
 	q_25=q_var[2]
 	q_75=q_var[4]
-	iqr=IQR(input, na.rm = T)
+	iqr=IQR(input, na.rm = TRUE)
 
 	bottom_threshold=q_25-(iqr * 3)
 	top_threshold=(iqr * 3) + q_75
@@ -262,7 +262,7 @@ tukey_outlier <- function(input)
 #' @param input Numeric variable vector
 #' @param k_mad_value 'K' multiplier for the median absolute deviation. The higher the value, the more outliers will be detected. Default value=3 (it's an standad)
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' hampel_outlier(heart_disease$age)
 #' }
 #' @return A two-item vector, the first value represents the bottom threshold, while the second one is the top threshold

@@ -4,7 +4,7 @@
 \alias{fibonacci}
 \title{Fibonacci series}
 \usage{
-fibonacci(length, remove_first = F)
+fibonacci(length, remove_first = FALSE)
 }
 \arguments{
 \item{length}{data frame}
